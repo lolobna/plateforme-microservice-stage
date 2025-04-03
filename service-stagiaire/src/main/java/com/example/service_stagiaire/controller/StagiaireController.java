@@ -1,5 +1,6 @@
 package com.example.service_stagiaire.controller;
 
+import com.example.service_stagiaire.model.Experience;
 import com.example.service_stagiaire.model.Language;
 import com.example.service_stagiaire.model.Projet;
 import com.example.service_stagiaire.model.Stagiaire;
@@ -129,5 +130,47 @@ public class StagiaireController {
         }
         return ResponseEntity.status(404).build();
     }
+
+    //===========================================EXPERIENCE===============================================//
+    // Ajouter une expérience à un stagiaire
+    @PostMapping("/{stagiaireId}/experiences")
+    public ResponseEntity<Experience> addExperience(@PathVariable String stagiaireId, @RequestBody Experience experience) {
+        Stagiaire updatedStagiaire = service.addExperienceToStagiaire(stagiaireId, experience);
+        if (updatedStagiaire != null) {
+            return ResponseEntity.ok(experience);
+        }
+        return ResponseEntity.status(404).body(null);
+    }
+
+    // Récupérer toutes les expériences d'un stagiaire
+    @GetMapping("/{stagiaireId}/experiences")
+    public ResponseEntity<List<Experience>> getExperiences(@PathVariable String stagiaireId) {
+        List<Experience> experiences = service.getExperiencesOfStagiaire(stagiaireId);
+        if (experiences != null) {
+            return ResponseEntity.ok(experiences);
+        }
+        return ResponseEntity.status(404).body(null);
+    }
+
+    // Mettre à jour une expérience d'un stagiaire
+    @PutMapping("/{stagiaireId}/experiences/{experienceId}")
+    public ResponseEntity<Experience> updateExperience(@PathVariable String stagiaireId, @PathVariable String experienceId, @RequestBody Experience updatedExperience) {
+        Stagiaire updatedStagiaire = service.updateExperienceOfStagiaire(stagiaireId, experienceId, updatedExperience);
+        if (updatedStagiaire != null) {
+            return ResponseEntity.ok(updatedExperience);
+        }
+        return ResponseEntity.status(404).body(null);
+    }
+
+    // Supprimer une expérience d'un stagiaire
+    @DeleteMapping("/{stagiaireId}/experiences/{experienceId}")
+    public ResponseEntity<Void> deleteExperience(@PathVariable String stagiaireId, @PathVariable String experienceId) {
+        Stagiaire updatedStagiaire = service.removeExperienceFromStagiaire(stagiaireId, experienceId);
+        if (updatedStagiaire != null) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.status(404).build();
+    }
+
 
 }
