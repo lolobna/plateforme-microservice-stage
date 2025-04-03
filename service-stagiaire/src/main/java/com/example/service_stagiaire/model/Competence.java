@@ -2,12 +2,15 @@ package com.example.service_stagiaire.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.util.UUID;
 
 @AllArgsConstructor
 public class Competence {
+    @Id
     @JsonProperty("idCompetence")
-    @Field("idCompetence")
     private String idCompetence;
 
     @JsonProperty("competenceName")
@@ -19,7 +22,9 @@ public class Competence {
     private String level;
 
     // Constructeur, getters et setters
-    public Competence() {}
+    public Competence() {
+        this.idCompetence = UUID.randomUUID().toString();
+    }
 
     public String getIdCompetence() { return idCompetence; }
     public void setIdCompetence(String idCompetence) { this.idCompetence = idCompetence; }
