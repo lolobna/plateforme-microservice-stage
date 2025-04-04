@@ -17,6 +17,7 @@ public class StagiaireController {
         this.service = service;
     }
 
+    // Opérations CRUD de base
     @GetMapping
     public List<Stagiaire> getAll() {
         return service.getAllStagiaires();
@@ -44,4 +45,6 @@ public class StagiaireController {
         service.deleteStagiaire(id);
         return ResponseEntity.noContent().build();
     }
+
+
 }

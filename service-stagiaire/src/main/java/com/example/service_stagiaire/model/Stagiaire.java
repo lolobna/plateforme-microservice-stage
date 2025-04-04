@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Document(collection = "stagiaires")
@@ -21,6 +22,14 @@ public class Stagiaire {
     @JsonProperty("fullName")
     @Field("fullName")
     private String fullName;
+
+    @JsonProperty("Email")
+    @Field("Email")
+    private String Email;
+
+    @JsonProperty("DateNaissance")
+    @Field("DateNaissance")
+    private Date DateNaissance;
 
     @JsonProperty("phone")
     @Field("phone")
@@ -85,6 +94,19 @@ public class Stagiaire {
 
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }
+
+    // Getter pour DateNaissance
+    public Date getDateNaissance() {
+        return DateNaissance;
+    }
+
+    // Setter pour DateNaissance
+    public void setDateNaissance(Date DateNaissance) {
+        this.DateNaissance = DateNaissance;
+    }
+
+    public String getEmail() { return Email; }
+    public void setEmail(String Email) { this.Email = Email; }
 
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }

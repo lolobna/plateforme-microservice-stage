@@ -54,7 +54,7 @@ public class CompetenceService {
                     // Conserve l'ID existant
                     updatedCompetence.setIdCompetence(competenceId);
 
-                    competence.setCompetence(updatedCompetence.getCompetence());
+                    competence.setcompetenceName(updatedCompetence.getcompetenceName());
                     competence.setLevel(updatedCompetence.getLevel());
                     return repository.save(stagiaire);
                 }

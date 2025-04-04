@@ -29,8 +29,8 @@ public class Competence {
     public String getIdCompetence() { return idCompetence; }
     public void setIdCompetence(String idCompetence) { this.idCompetence = idCompetence; }
 
-    public String getCompetence() { return competenceName; }
-    public void setCompetence(String competence) { this.competenceName = competence; }
+    public String getcompetenceName() { return competenceName; }
+    public void setcompetenceName(String competence) { this.competenceName = competence; }
 
     public String getLevel() { return level; }
     public void setLevel(String level) { this.level = level; }
