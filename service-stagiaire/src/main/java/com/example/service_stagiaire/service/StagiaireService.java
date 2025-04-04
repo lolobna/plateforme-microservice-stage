@@ -4,10 +4,8 @@ import com.example.service_stagiaire.model.*;
 import com.example.service_stagiaire.repository.StagiaireRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class StagiaireService {
@@ -15,7 +13,6 @@ public class StagiaireService {
 
     public StagiaireService(StagiaireRepository repository) {
         this.repository = repository;
-
     }
 
     public List<Stagiaire> getAllStagiaires() {
@@ -34,6 +31,8 @@ public class StagiaireService {
         return repository.findById(id)
                 .map(stagiaire -> {
                     stagiaire.setFullName(stagiaireDetails.getFullName());
+                    stagiaire.setEmail(stagiaireDetails.getEmail()); // Ajouté
+                    stagiaire.setDateNaissance(stagiaireDetails.getDateNaissance()); // Ajouté
                     stagiaire.setPhone(stagiaireDetails.getPhone());
                     stagiaire.setAddress(stagiaireDetails.getAddress());
                     stagiaire.setUniversity(stagiaireDetails.getUniversity());
@@ -56,7 +55,5 @@ public class StagiaireService {
         repository.deleteById(id);
     }
 
-
-
-
+    
 }

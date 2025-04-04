@@ -9,6 +9,12 @@ spring:
       database: crud_stagiaire
   application:
     name: service-stagiaire  # Important pour Eureka
+  webmvc:
+    cors:
+      allowed-origins: "http://localhost:3000"
+      allowed-methods: "GET,POST,PUT,DELETE"
+      allowed-headers: "*"
+      mapping-path-patterns: "/api/**"
 
 logging:
   level:
