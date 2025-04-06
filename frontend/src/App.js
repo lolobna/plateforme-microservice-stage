@@ -3,8 +3,7 @@ import Header from "./components/Header"
 import Footer from "./components/Footer"
 import Navheader from "./components/NavHeader";
 import Sidebar from "./components/Sidebar";
-import ContentBody from "./components/ContentBody";
-import StagiairesList from "./components/StagiairesList";
+import ProfileStagiaire from "./components/ProfileStagiaire";
 
 const App = () => {
   return (
@@ -18,7 +17,7 @@ const App = () => {
 
           <Sidebar />
 
-          <StagiairesList />
+          <ProfileStagiaire/>
 
           <Footer />
     </div>
