@@ -3,12 +3,14 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import AboutMe from "./AboutMe";
-import Experience from "./Experience";
-import Projet from "./Projet";
+import AboutMe from "../components/AboutMe";
+import Experience from "../components/Experience";
+import Projet from "../components/Projet";
 import { width } from "@fortawesome/free-solid-svg-icons/fa0";
+import { useParams } from 'react-router-dom';
 
 const StagiairesList = () => {
+    const { idstagiaire } = useParams(); // Récupère l'ID du stagiaire depuis l'URL
   const [stagiaire, setStagiaire] = useState(); // Stocke les stagiaires
   const [loading, setLoading] = useState(true); // Indique si les données chargent
   const [error, setError] = useState(null);
@@ -34,6 +36,26 @@ const StagiairesList = () => {
   const [editProjet, setEditProjet] = useState(null);
 
   useEffect(() => {
+    // Fonction pour récupérer le stagiaire via l'ID
+    const fetchStagiaire = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8081/api/stagiaires/${idstagiaire}`
+        ); // Remplacez l'URL par celle de votre API
+        setStagiaire(response.data); // Stocke les données du stagiaire
+        setLoading(false); // Arrête le chargement
+      } catch (err) {
+        console.error("Erreur lors de la récupération du stagiaire :", err);
+        setError("Le stagiaire avec cet ID n'existe pas.");
+        setLoading(false); // Arrête le chargement même en cas d'erreur
+      }
+    };
+
+    fetchStagiaire();
+  }, [idstagiaire]);
+
+  useEffect(() => {
+    
     if (stagiaire) {
       const languages = [...(stagiaire.languages || [])];
       const competences = [...(stagiaire.competences || [])];
