@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useStagiaire } from "../context/StagiaireContext";
 
-const HomeStagiaire = () => {
+const PostEnregistres = () => {
   const { idstagiaire } = useParams(); // Récupère l'ID depuis l'URL
   const { setIdStagiaire } = useStagiaire(); // Met à jour l'ID dans le contexte
 
@@ -120,4 +120,4 @@ const HomeStagiaire = () => {
   );
 };
 
-export default HomeStagiaire;
+export default PostEnregistres;
