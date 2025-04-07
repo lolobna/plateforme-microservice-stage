@@ -44,6 +44,7 @@ const Sidebar = () => {
             </li>
 
             {/* Lien vers les posts enregistrés */}
+            
             <li className="nav-label">Posts enregistrés</li>
             <li>
               <a
@@ -61,7 +62,7 @@ const Sidebar = () => {
             <li>
               <a
                 className="has-arrow"
-                href={`/${idstagiaire}/dashboard`}
+                href={`/${idstagiaire}/candidature`}
                 aria-expanded="false"
               >
                 <i className="fa-regular fa-circle-check"></i>

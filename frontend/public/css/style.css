@@ -1,58 +1,4 @@
-/*
-    Table of Contents
 
-    Name                 : Efron
-    Author               : Quixkit
-    Author Portfolio     : https://themeforest.net/user/quixkit/portfolio
-    
-
-
-    Table of Sass Contents
-
-    1. Abstracts
-        _bs-custom
-        _inheritance
-        _maps
-        _mixin
-        _variable
-
-    2. bootstrap 
-        -Here goes all official bootstrap scss files
-
-    3. Global/Base
-        _color
-        _custom-grid
-        _fonts
-        _helper
-        _reset
-
-    4. layout
-        +footer
-        +header
-        +rtl
-        +sidebar
-        +tables
-        +theme
-        +version-dark
-
-    5. Conponents
-        +app
-        +charts
-        +forms
-        +map
-        +uc
-        +ui
-        +widget
-
-    6. Page
-        _index-1
-        _page-error
-        _page-register
-        _page-signin
-        _page-user-lock
-        _page-user-lock
-
-*/
 @import url("https://fonts.googleapis.com/css?family=Roboto:400,500,700");
 @import url("./../icons/simple-line-icons/css/simple-line-icons.css");
 @import url("./../icons/font-awesome-old/css/font-awesome.min.css");
@@ -19440,3 +19386,386 @@ html[dir="rtl"] [direction="rtl"][data-sidebar-style="compact"]:not([data-layout
 
 /*** Portfolio End ***/
 
+
+
+
+/* Style général du body */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f9f9f9; /* Couleur de fond clair */
+  margin: 0;
+  padding: 0;
+}
+
+/* Conteneur principal de la page */
+.content-body {
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
+  gap: 20px;
+ 
+  width: 100%;
+}
+.card-grid  a {
+  text-decoration: none;
+}
+/* Style des cartes */
+.job-card {
+  background-color: #ffffff; /* Fond blanc */
+  border: 1px solid #ddd; /* Bordure grise */
+  border-radius: 8px;
+  overflow: hidden;
+  
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.job-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.job-left {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #3498db; /* Couleur bleue */
+  color: #fff;
+
+}
+
+.job-left img {
+  border-radius: 50%;
+  margin-right: 20px;
+  width: 60px; /* Taille de l'image */
+  
+}
+
+.job-left h6 {
+  font-size: 16px;
+  font-weight: bold;
+  
+}
+
+.category-tag {
+  background-color: #2ecc71; /* Couleur verte */
+  padding: 5px 10px;
+  border-radius: 4px;
+  margin-left: auto;
+  font-size: 14px;
+  margin-right: 10px;
+  color: #fff;
+}
+
+.location, .type {
+  font-size: 14px;
+  color: #fff;
+ 
+  margin-right: 5px;
+}
+
+.job-right {
+  padding: 20px;
+}
+
+.job-right h2 {
+  font-size: 18px;
+  color: #3498db; /* Couleur bleue */
+  margin-bottom: 15px;
+}
+
+.job-right p {
+  font-size: 16px;
+  color: #333; /* Couleur du texte */
+  margin-bottom: 20px;
+}
+
+.tags span {
+  display: inline-block;
+  background-color: #e7f7ff; /* Fond bleu clair */
+  color: #3498db; /* Texte bleu */
+  padding: 5px 10px;
+  border-radius: 4px;
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.Requiredskills {
+  margin-top: 20px;
+}
+
+.Requiredskills strong {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.Requiredskills ul {
+  padding-left: 20px;
+}
+
+.Requiredskills li {
+  font-size: 14px;
+  color: #555; /* Gris clair */
+  background-color: #e7f7ff; /* Fond bleu clair */
+  padding: 5px 10px;
+  border-radius: 4px;
+  margin: 5px 0;
+  list-style-type: none; /* Supprime les puces de la liste */
+  width: fit-content;
+  
+}
+
+.card-footer {
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f0f4f8; /* Fond gris clair */
+}
+
+.apply-btn {
+  background-color: #3498db; /* Bleu */
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.apply-btn:hover {
+  background-color: #2980b9; /* Bleu foncé */
+}
+
+.save-icon {
+  font-size: 20px;
+  color: #999; /* Gris pour l'icône */
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.save-icon:hover {
+  color: #3498db; /* Change la couleur au survol (bleu) */
+}
+
+/* Ajout de la responsive design pour les petits écrans */
+@media (max-width: 768px) {
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .job-card {
+    margin: 10px 0;
+  }
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 18px;
+  margin: 25px 0 15px 0;
+  color: #555;
+}
+
+.product {
+  margin-bottom: 30px;
+}
+
+.product-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.product-assignee {
+  margin-left: 20px;
+  margin-bottom: 10px;
+  color: #666;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th, td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  font-weight: normal;
+  color: #777;
+}
+
+.priority-low {
+  color: #28a745;
+}
+
+.priority-medium {
+  color: #ffc107;
+}
+
+.priority-high {
+  color: #fd7e14;
+}
+
+.priority-very-high {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+.bold-text {
+  font-weight: bold;
+}
+
+
+/* ==================== candidtutres */
+
+.container2 {
+  background: #fff;
+  padding: 30px;
+  border-radius: 16px;
+  width: 100%;
+  margin: auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.stage-btn {
+  text-decoration: none;
+}
+
+.skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.skill-badge {
+  background-color: #e8f0fe;
+  color: #1a73e8;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background-color 0.3s ease;
+}
+
+.skill-badge:hover {
+  background-color: #d2e3fc;
+  cursor: default;
+}
+.stage-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+}
+
+.stage-btn {
+  background-color: #4f46e5;
+  color: white;
+  text-decoration: none;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  transition: background-color 0.3s ease;
+}
+
+.stage-btn:hover {
+  background-color: #3730a3;
+}
+
+.stage-badge {
+  background-color: #e0f2f1;
+  color: #00796b;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+
+.container2 h2 {
+  margin-bottom: 20px;
+  font-size: 20px;
+  color: #222;
+}
+
+.container2 .table-header, .container2 .row {
+  display: grid;
+  grid-template-columns: 2fr 2fr 2fr 1fr 1fr;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.container2 .table-header {
+  font-weight: bold;
+  color: #555;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.container2 .row:last-child {
+  border-bottom: none;
+}
+
+.container2 .assigned {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.container2 .assigned img {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+}
+
+.container2 .assigned p {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: #888;
+}
+
+.container2 .tag {
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.container2 .low {
+  background-color: #d1f8dc;
+  color: #27ae60;
+}
+
+.container2 .medium {
+  background-color: #fff3cd;
+  color: #f0ad4e;
+}
+
+.container2 .high {
+  background-color: #fcdede;
+  color: #e74c3c;
+}
+
+.container2 .very-high {
+  background-color: #d3f7f8;
+  color: #17a2b8;
+}

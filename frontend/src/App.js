@@ -9,6 +9,8 @@ import Accueil from "./pages/Accueil"; // Page d'accueil
 import AboutUs from "./pages/AboutUs"; // Page "About Us"
 import HomeStagiaire from "./pages/HomeStagiaire"; // Page Home pour un stagiaire
 import ProfileStagiaire from "./pages/ProfileStagiaire"; // Page Profile pour un stagiaire
+import PostEnregistres from "./pages/PostEnregistres";
+import StagiaireCandidature from "./pages/StagiareCandidatures";
 
 const App = () => {
   return (
@@ -35,7 +37,13 @@ const App = () => {
                 path="/:idstagiaire/profile"
                 element={<ProfileStagiaire />}
               />
+               {/* Route pour la page PostEnregistres d'un stagiaire */}
+               <Route path="/:idstagiaire/saved-posts" element={<PostEnregistres />} />
+                {/* Route pour la page PostEnregistres d'un stagiaire */}
+                <Route path="/:idstagiaire/candidature" element={<StagiaireCandidature />} />
             </Routes>
+
+             
           </div>
 
           <Footer />
