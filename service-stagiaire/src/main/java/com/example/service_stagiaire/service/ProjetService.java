@@ -4,7 +4,12 @@ import com.example.service_stagiaire.model.Projet;
 import com.example.service_stagiaire.model.Stagiaire;
 import com.example.service_stagiaire.repository.StagiaireRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,27 +36,66 @@ public class ProjetService {
         return null;
     }
 
+    public Projet addProjetToStagiaire(String stagiaireId, String title, String description, MultipartFile projetImgFile) throws IOException {
+        Optional<Stagiaire> stagiaireOpt = repository.findById(stagiaireId);
+        if (stagiaireOpt.isPresent()) {
+            Stagiaire stagiaire = stagiaireOpt.get();
+            Projet newProjet = new Projet();
+            newProjet.setIdProjet(UUID.randomUUID().toString());
+            newProjet.setTitle(title);
+            newProjet.setDescription(description);
+
+            // Enregistrer l'image si elle est présente
+            if (projetImgFile != null && !projetImgFile.isEmpty()) {
+                String imagePath = saveFile(projetImgFile, "uploads/projects/");
+                newProjet.setProjetImg(imagePath);
+            }
+
+            stagiaire.getProjets().add(newProjet);
+            repository.save(stagiaire);
+            return newProjet;
+        } else {
+            throw new RuntimeException("Stagiaire non trouvé");
+        }
+    }
+
     public List<Projet> getProjetsOfStagiaire(String stagiaireId) {
         Optional<Stagiaire> stagiaireOpt = repository.findById(stagiaireId);
         return stagiaireOpt.map(Stagiaire::getProjets).orElse(null);
     }
 
-    public Stagiaire updateProjetOfStagiaire(String stagiaireId, String projetId, Projet updatedProjet) {
+    public Projet updateProjetOfStagiaire(String stagiaireId, String projetId, String title, String description, MultipartFile projetImgFile) throws IOException {
         Optional<Stagiaire> stagiaireOpt = repository.findById(stagiaireId);
         if (stagiaireOpt.isPresent()) {
             Stagiaire stagiaire = stagiaireOpt.get();
             List<Projet> projets = stagiaire.getProjets();
             for (Projet projet : projets) {
                 if (projet.getIdProjet().equals(projetId)) {
-                    projet.setIdProjet(projetId);
-                    projet.setTitle(updatedProjet.getTitle());
-                    projet.setDescription(updatedProjet.getDescription());
-                    projet.setProjetImg(updatedProjet.getProjetImg());
-                    return repository.save(stagiaire);
+                    projet.setTitle(title);
+                    projet.setDescription(description);
+
+                    if (projetImgFile != null && !projetImgFile.isEmpty()) {
+                        String imagePath = saveFile(projetImgFile, "uploads/projects/");
+                        projet.setProjetImg(imagePath); // Mettez à jour le chemin de l'image
+                    }
+
+                    repository.save(stagiaire);
+                    return projet;
                 }
             }
         }
-        return null;
+        throw new RuntimeException("Projet ou stagiaire non trouvé");
+    }
+
+    private String saveFile(MultipartFile file, String directory) throws IOException {
+        Path uploadsPath = Paths.get(directory);
+        if (!Files.exists(uploadsPath)) {
+            Files.createDirectories(uploadsPath);
+        }
+        String filePath = directory + file.getOriginalFilename();
+        Path path = Paths.get(filePath);
+        Files.write(path, file.getBytes());
+        return filePath;
     }
 
     public Stagiaire removeProjetFromStagiaire(String stagiaireId, String projetId) {

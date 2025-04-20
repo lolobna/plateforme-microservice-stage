@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPen } from "@fortawesome/free-solid-svg-icons";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+
 import AboutMe from "../components/AboutMe";
 import Experience from "../components/Experience";
 import Projet from "../components/Projet";
-import { width } from "@fortawesome/free-solid-svg-icons/fa0";
-import { useParams } from 'react-router-dom';
+import ProfileSettings from "../components/Profile_settings";
+import { useStagiaire } from "../context/StagiaireContext";
 
 const StagiairesList = () => {
-    const { idstagiaire } = useParams(); // Récupère l'ID du stagiaire depuis l'URL
+  const { idstagiaire } = useStagiaire();
   const [stagiaire, setStagiaire] = useState(); // Stocke les stagiaires
   const [loading, setLoading] = useState(true); // Indique si les données chargent
   const [error, setError] = useState(null);
@@ -18,6 +16,7 @@ const StagiairesList = () => {
   const [isEditingAboutMe, setIsEditingAboutMe] = useState(false);
   const [isEditingExperience, setIsEditingExperience] = useState(false);
   const [isEditingProjet, setIsEditingProjet] = useState(false);
+  const [isCvModalOpen, setIsCvModalOpen] = useState(false);
   const [editForm, setEditForm] = useState({
     description: "",
     fullName: "",
@@ -34,28 +33,19 @@ const StagiairesList = () => {
   const [tempCompetences, setTempCompetences] = useState([]);
   const [editExperience, setEditExperience] = useState(null);
   const [editProjet, setEditProjet] = useState(null);
+  const [profileForm, setProfileForm] = useState({
+    email: "",
+    fullName: "",
+    cv: null,
+    profilePhoto: null,
+  });
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const openCvModal = () => setIsCvModalOpen(true);
+  const closeCvModal = () => setIsCvModalOpen(false);
 
   useEffect(() => {
-    // Fonction pour récupérer le stagiaire via l'ID
-    const fetchStagiaire = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8081/api/stagiaires/${idstagiaire}`
-        ); // Remplacez l'URL par celle de votre API
-        setStagiaire(response.data); // Stocke les données du stagiaire
-        setLoading(false); // Arrête le chargement
-      } catch (err) {
-        console.error("Erreur lors de la récupération du stagiaire :", err);
-        setError("Le stagiaire avec cet ID n'existe pas.");
-        setLoading(false); // Arrête le chargement même en cas d'erreur
-      }
-    };
-
-    fetchStagiaire();
-  }, [idstagiaire]);
-
-  useEffect(() => {
-    
     if (stagiaire) {
       const languages = [...(stagiaire.languages || [])];
       const competences = [...(stagiaire.competences || [])];
@@ -77,6 +67,17 @@ const StagiairesList = () => {
       setTempCompetences(competences);
     }
   }, [stagiaire]);
+
+  useEffect(() => {
+    if (successMessage || errorMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage("");
+        setErrorMessage("");
+      }, 3000); // Réinitialise après 3 secondes
+
+      return () => clearTimeout(timer); // Nettoie le timer
+    }
+  }, [successMessage, errorMessage]);
 
   const handleAddLanguage = (languageName, level) => {
     // Vérifier si le nom de la langue et le niveau ne sont pas vides
@@ -143,9 +144,15 @@ const StagiairesList = () => {
     setIsEditingExperience(true); // Active le mode édition
     setEditExperience(experience); // Stocke l'expérience à modifier
   };
+
   const handleEditProjetClick = (projet) => {
     setIsEditingProjet(true); // Active le mode édition
     setEditProjet(projet); // Stocke l'expérience à modifier
+  };
+
+  const handleAddProjetClick = () => {
+    setEditProjet({ title: "", description: "", projetImg: null });
+    setIsEditingProjet(true); // Active le mode édition
   };
 
   const handleSaveExperience = async (
@@ -158,45 +165,145 @@ const StagiairesList = () => {
         `http://localhost:8081/api/stagiaires/${stagiaireId}/experiences/${experienceId}`,
         updatedExperience
       );
-      console.log("Expérience mise à jour :", response.data);
-      console.log("Stagiaire ID:", stagiaireId);
-      console.log("Experience ID:", experienceId);
-      console.log("Données mises à jour :", updatedExperience);
 
-      // Mettez à jour l'état local avec les nouvelles données
+      // Mettre à jour l'état local avec les nouvelles données
       setStagiaire((prev) => ({
         ...prev,
         experiences: prev.experiences.map((exp) =>
           exp.idExperience === experienceId ? response.data : exp
         ),
       }));
+
+      setSuccessMessage("Expérience modifiée avec succès !");
       setIsEditingExperience(false); // Désactive le mode édition
     } catch (error) {
-      console.error("Erreur lors de la mise à jour de l'expérience :", error);
+      setErrorMessage("Erreur lors de la modification de l'expérience.");
+      console.error("Erreur lors de la modification de l'expérience :", error);
+    }
+  };
+
+  const handleAddExperience = async (newExperience) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:8081/api/stagiaires/${stagiaire._id}/experiences`,
+        newExperience
+      );
+
+      // Mettre à jour l'état local avec la nouvelle expérience
+      setStagiaire((prev) => ({
+        ...prev,
+        experiences: [...prev.experiences, response.data],
+      }));
+
+      setSuccessMessage("Expérience ajoutée avec succès !");
+      setIsEditingExperience(false); // Désactive le mode édition
+      setEditExperience(null); // Réinitialise le formulaire
+    } catch (error) {
+      setErrorMessage("Erreur lors de l'ajout de l'expérience.");
+      console.error("Erreur lors de l'ajout de l'expérience :", error);
+    }
+  };
+
+  const handleDeleteExperience = async (experienceId) => {
+    if (
+      window.confirm("Êtes-vous sûr de vouloir supprimer cette expérience ?")
+    ) {
+      try {
+        await axios.delete(
+          `http://localhost:8081/api/stagiaires/${stagiaire._id}/experiences/${experienceId}`
+        );
+
+        // Mettre à jour l'état local après suppression
+        setStagiaire((prev) => ({
+          ...prev,
+          experiences: prev.experiences.filter(
+            (exp) => exp.idExperience !== experienceId
+          ),
+        }));
+
+        setSuccessMessage("Expérience supprimée avec succès !");
+      } catch (error) {
+        setErrorMessage("Erreur lors de la suppression de l'expérience.");
+        console.error("Erreur lors de la suppression de l'expérience :", error);
+      }
     }
   };
 
   const handleSaveProjet = async (stagiaireId, projetId, updatedProjet) => {
     try {
+      const formData = new FormData();
+      formData.append("title", updatedProjet.title);
+      formData.append("description", updatedProjet.description);
+      if (updatedProjet.imageFile) {
+        formData.append("projetImg", updatedProjet.imageFile); // Ajoutez l'image au FormData
+      }
+
       const response = await axios.put(
         `http://localhost:8081/api/stagiaires/${stagiaireId}/projets/${projetId}`,
-        updatedProjet
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
-      console.log("Expérience mise à jour :", response.data);
-      console.log("Stagiaire ID:", stagiaireId);
-      console.log("Experience ID:", projetId);
-      console.log("Données mises à jour :", updatedProjet);
 
       // Mettez à jour l'état local avec les nouvelles données
       setStagiaire((prev) => ({
         ...prev,
-        projets: prev.projets.map((exp) =>
-          exp.idProjet === projetId ? response.data : exp
+        projets: prev.projets.map((projet) =>
+          projet.idProjet === projetId ? response.data : projet
         ),
       }));
       setIsEditingProjet(false); // Désactive le mode édition
     } catch (error) {
-      console.error("Erreur lors de la mise à jour de l'projet :", error);
+      console.error("Erreur lors de la mise à jour du projet :", error);
+    }
+  };
+
+  const handleAddProjet = async (newProjet) => {
+    try {
+      const formData = new FormData();
+      formData.append("title", newProjet.title);
+      formData.append("description", newProjet.description);
+      if (newProjet.imageFile) {
+        formData.append("projetImg", newProjet.imageFile);
+      }
+
+      console.log("Données envoyées :", newProjet); // Log des données envoyées
+
+      const response = await axios.post(
+        `http://localhost:8081/api/stagiaires/${stagiaire._id}/projets`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      console.log("Réponse de l'API :", response.data); // Log de la réponse
+
+      // Mettre à jour l'état local avec le nouveau projet
+      setStagiaire((prev) => ({
+        ...prev,
+        projets: [...prev.projets, response.data],
+      }));
+
+      // Afficher un message de succès
+      setSuccessMessage("Projet ajouté avec succès !");
+      setIsEditingProjet(false); // Désactive le mode édition
+      setEditProjet(null); // Réinitialise le formulaire
+    } catch (error) {
+      console.error("Erreur lors de l'ajout du projet :", error);
+    }
+  };
+
+  const handleDeleteProjet = async (projetId) => {
+    try {
+      await axios.delete(
+        `http://localhost:8081/api/stagiaires/${stagiaire._id}/projets/${projetId}`
+      );
+
+      // Mettre à jour l'état local en supprimant le projet
+      setStagiaire((prev) => ({
+        ...prev,
+        projets: prev.projets.filter((projet) => projet.idProjet !== projetId),
+      }));
+    } catch (error) {
+      console.error("Erreur lors de la suppression du projet :", error);
     }
   };
 
@@ -234,6 +341,57 @@ const StagiairesList = () => {
     }));
   };
 
+  const handleProfileChange = (e) => {
+    const { name, value, files } = e.target;
+    if (files) {
+      setProfileForm((prev) => ({ ...prev, [name]: files[0] }));
+    } else {
+      setProfileForm((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleProfileSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append(
+      "stagiaire",
+      JSON.stringify({
+        email: profileForm.email,
+        fullName: profileForm.fullName,
+      })
+    );
+    if (profileForm.cv) {
+      formData.append("cv", profileForm.cv);
+    }
+    if (profileForm.profilePhoto) {
+      formData.append("profilePhoto", profileForm.profilePhoto);
+    }
+
+    try {
+      const response = await axios.put(
+        `http://localhost:8081/api/stagiaires/${stagiaire._id}/profile`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      // Mettre à jour l'état local avec les nouvelles données
+      setStagiaire((prev) => ({
+        ...prev,
+        Email: response.data.Email,
+        fullName: response.data.fullName,
+        profilePhoto: response.data.profilePhoto,
+        cv: response.data.cv,
+      }));
+
+      // Afficher un message de succès
+      setSuccessMessage("Mise à jour réussie !");
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du profil :", error);
+      setErrorMessage("Une erreur s'est produite lors de la mise à jour.");
+    }
+  };
+
   //update
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -242,6 +400,7 @@ const StagiairesList = () => {
       ...editForm,
       languages: tempLanguages,
       competences: tempCompetences,
+      projets: stagiaire.projets,
       experiences: stagiaire.experiences || [],
     };
 
@@ -257,6 +416,7 @@ const StagiairesList = () => {
       setError("An error occurred while updating the information.");
     }
   };
+  
 
   //recuperer
   useEffect(() => {
@@ -264,19 +424,27 @@ const StagiairesList = () => {
     const fetchStagiaires = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8081/api/stagiaires"
+          `http://localhost:8081/api/stagiaires/${idstagiaire}`
         ); // URL de l'API
-        setStagiaire(response.data[0]); // Mets à jour les stagiaires
+        setStagiaire(response.data);
         setLoading(false); // Arrête le chargement
+
+        // Initialiser le formulaire avec les données du stagiaire
+        setProfileForm({
+          email: response.data.Email || "",
+          fullName: response.data.fullName || "",
+          cv: null, // Les fichiers ne peuvent pas être pré-remplis
+          profilePhoto: null, // Les fichiers ne peuvent pas être pré-remplis
+        });
       } catch (err) {
-        console.error(" lors de la récupération :", err);
+        console.error("Erreur lors de la récupération :", err);
         setError("Impossible de charger les stagiaires.");
         setLoading(false);
       }
     };
 
     fetchStagiaires(); // Appelle la fonction au chargement
-  }, []);
+  }, [idstagiaire]);
 
   if (loading) return <p>Chargement en cours...</p>;
   if (error) return <p>{error}</p>;
@@ -294,9 +462,13 @@ const StagiairesList = () => {
                     <div className="cover-photo" />
                     <div className="profile-photo">
                       <img
-                        src="images/profile/profile.png"
+                        src={
+                          stagiaire && stagiaire.profilePhoto
+                            ? `http://localhost:8081/${stagiaire.profilePhoto}` // URL de la photo de profil
+                            : "images/profile/profile.png" // Image par défaut
+                        }
                         className="img-fluid rounded-circle"
-                        alt
+                        alt="Profile"
                       />
                     </div>
                   </div>
@@ -316,6 +488,54 @@ const StagiairesList = () => {
                             <div className="profile-email">
                               <h4 className="text-muted">{stagiaire.Email}</h4>
                               <p>Email</p>
+                            </div>
+                          </div>
+                          <div className="col-xl-4 col-sm-4 prf-col">
+                            <div className="profile-cv">
+                              {stagiaire && stagiaire.cv ? (
+                                <>
+                               <button
+  className="btn btn-modern"
+  onClick={openCvModal}
+  style={{
+    position: 'absolute',
+    right: '20px', // vous pouvez ajuster cette valeur selon vos besoins
+    top: '20px', // ajustez la position verticale si nécessaire
+    padding: '10px 20px', // ajoute un peu de padding pour un bouton plus grand
+    backgroundColor: '#4CAF50', // couleur moderne
+    color: 'white', // texte blanc
+    border: 'none',
+    borderRadius: '5px', // arrondir les coins
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', // effet d'ombre
+    transition: 'background-color 0.3s ease', // effet de transition pour le survol
+  }}
+  onMouseOver={(e) => (e.target.style.backgroundColor = '#45a049')} // couleur au survol
+  onMouseOut={(e) => (e.target.style.backgroundColor = '#4CAF50')} // couleur par défaut
+>
+  Voir le CV
+</button>
+
+                                  {isCvModalOpen && (
+                                    <div className="modal-overlay">
+                                      <div className="modal-content">
+                                        <button
+                                          className="close-button"
+                                          onClick={closeCvModal}
+                                        >
+                                          &times;
+                                        </button>
+                                        <iframe
+                                          src={`http://localhost:8081/${stagiaire.cv}`}
+                                          title="CV"
+                                          className="cv-iframe"
+                                        ></iframe>
+                                      </div>
+                                    </div>
+                                  )}
+                                </>
+                              ) : (
+                                <p className="text-muted">CV non disponible</p>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -375,15 +595,19 @@ const StagiairesList = () => {
                           <Experience
                             stagiaire={stagiaire}
                             isEditingExperience={isEditingExperience}
-                            editForm={editForm}
                             editExperience={editExperience}
                             handleChangeExperience={handleChangeExperience}
-                            handleSubmit={handleSubmit}
+                            handleSaveExperience={handleSaveExperience}
                             handleCancel={handleCancel}
+                            setEditExperience={setEditExperience}
+                            setIsEditingExperience={setIsEditingExperience}
+                            handleAddExperience={handleAddExperience}
+                            handleDeleteExperience={handleDeleteExperience}
                             handleEditExperienceClick={
                               handleEditExperienceClick
-                            }
-                            handleSaveExperience={handleSaveExperience}
+                            } // Passez la fonction ici
+                            successMessage={successMessage}
+                            errorMessage={errorMessage}
                           />
                         </div>
 
@@ -412,104 +636,26 @@ const StagiairesList = () => {
                           <Projet
                             stagiaire={stagiaire}
                             isEditingProjet={isEditingProjet}
-                            editForm={editForm}
-                            editProjet={editProjet}
-                            handleChangeProjet={handleChangeProjet}
-                            handleSubmit={handleSubmit}
-                            handleCancel={handleCancel}
                             handleEditProjetClick={handleEditProjetClick}
+                            handleChangeProjet={handleChangeProjet}
+                            editProjet={editProjet}
                             handleSaveProjet={handleSaveProjet}
+                            handleCancel={handleCancel}
+                            setEditProjet={setEditProjet}
+                            handleAddProjet={handleAddProjet}
+                            handleDeleteProjet={handleDeleteProjet}
+                            setIsEditingProjet={setIsEditingProjet}
+                            successMessage={successMessage} // Passez successMessage ici
                           />
                         </div>
                         <div id="profileSettings" className="tab-pane fade">
-                          <div className="pt-3">
-                            <div className="settings-form">
-                              <h4 className="text-primary">Account Setting</h4>
-                              <form>
-                                <div className="form-row">
-                                  <div className="form-group col-md-6">
-                                    <label>Email</label>
-                                    <input
-                                      type="email"
-                                      placeholder="Email"
-                                      className="form-control"
-                                    />
-                                  </div>
-                                  <div className="form-group col-md-6">
-                                    <label> Full Name</label>
-                                    <input
-                                      type="text"
-                                      placeholder="Password"
-                                      className="form-control"
-                                    />
-                                  </div>
-                                  <div className="form-group col-md-6">
-                                    <label> Fillierer</label>
-                                    <input
-                                      type="text"
-                                      placeholder="Password"
-                                      className="form-control"
-                                    />
-                                  </div>
-                                  <div className="form-group col-md-3">
-                                    <label> profile </label>
-                                    <input
-                                      type="file"
-                                      className="form-control"
-                                    />
-                                  </div>
-                                  <div className="form-group col-md-3">
-                                    <img
-                                      src="images/profile/profile.png"
-                                      className="img-fluid rounded-circle w-30"
-                                      alt=""
-                                      
-                                    />
-                                  </div>
-                                  <div className="form-group col-md-6">
-                                    <label>Password</label>
-                                    <input
-                                      type="password"
-                                      placeholder="Password"
-                                      className="form-control"
-                                    />
-                                  </div>
-                                  <div className="form-group col-md-6">
-                                    <label> confirmer Password</label>
-                                    <input
-                                      type="password"
-                                      placeholder="Password"
-                                      className="form-control"
-                                    />
-                                  </div>
-
-                                </div>
-                             
-                              
-                                <div className="form-group">
-                                  <div className="form-check">
-                                    <input
-                                      type="checkbox"
-                                      className="form-check-input"
-                                      id="gridCheck"
-                                    />
-                                    <label
-                                      htmlFor="gridCheck"
-                                      className="form-check-label"
-                                    >
-                                      Check me out
-                                    </label>
-                                  </div>
-                                </div>
-                                <button
-                                  className="btn btn-primary"
-                                  type="submit"
-                                >
-                                  Sign in
-                                </button>
-                              </form>
-                            </div>
-                          </div>
+                          <ProfileSettings
+                            profileForm={profileForm}
+                            handleProfileChange={handleProfileChange}
+                            handleProfileSubmit={handleProfileSubmit}
+                            successMessage={successMessage}
+                            errorMessage={errorMessage}
+                          />
                         </div>
                       </div>
                     </div>

@@ -3,7 +3,12 @@ package com.example.service_stagiaire.service;
 import com.example.service_stagiaire.model.*;
 import com.example.service_stagiaire.repository.StagiaireRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -84,10 +89,45 @@ public class StagiaireService {
                 .orElseThrow(() -> new RuntimeException("Stagiaire non trouvé"));
     }
 
+    public Stagiaire updateProfile(String id, Stagiaire stagiaireDetails, MultipartFile cvFile, MultipartFile profilePhotoFile) {
+        return repository.findById(id)
+                .map(stagiaire -> {
+                    if (cvFile != null && !cvFile.isEmpty()) {
+                        String cvPath = saveFile(cvFile);
+                        stagiaire.setCv(cvPath);
+                    }
+                    if (profilePhotoFile != null && !profilePhotoFile.isEmpty()) {
+                        String profilePhotoPath = saveFile(profilePhotoFile);
+                        stagiaire.setProfilePhoto(profilePhotoPath);
+                    }
+                    if (stagiaireDetails.getFullName() != null) {
+                        stagiaire.setFullName(stagiaireDetails.getFullName());
+                    }
+                    if (stagiaireDetails.getEmail() != null) {
+                        stagiaire.setEmail(stagiaireDetails.getEmail());
+                    }
+                    return repository.save(stagiaire);
+                })
+                .orElseThrow(() -> new RuntimeException("Stagiaire non trouvé"));
+    }
+
+    private String saveFile(MultipartFile file) {
+        try {
+            String uploadsDir = "uploads/";
+            Path uploadsPath = Paths.get(uploadsDir);
+            if (!Files.exists(uploadsPath)) {
+                Files.createDirectories(uploadsPath);
+            }
+            String filePath = uploadsDir + file.getOriginalFilename();
+            Path path = Paths.get(filePath);
+            Files.write(path, file.getBytes());
+            return filePath;
+        } catch (IOException e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement du fichier", e);
+        }
+    }
 
     public void deleteStagiaire(String id) {
         repository.deleteById(id);
     }
-
-
 }
