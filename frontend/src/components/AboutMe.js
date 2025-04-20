@@ -18,11 +18,30 @@ const AboutMe = ({
   handleRemoveCompetence,
   calculateAge,
 }) => {
+  const [selectedLevel, setSelectedLevel] = React.useState("A1");
   const age = calculateAge(stagiaire.DateNaissance);
+  const getLevelClass = (level) => {
+    switch (level) {
+      case "A1":
+        return "bg-info"; // Bleu clair
+      case "A2":
+        return "bg-primary"; // Bleu
+      case "B1":
+        return "bg-success"; // Vert
+      case "B2":
+        return "bg-warning"; // Jaune
+      case "C1":
+        return "bg-danger"; // Rouge
+      case "C2":
+        return "bg-dark"; // Gris foncé
+      default:
+        return "bg-secondary"; // Gris neutre
+    }
+  };
 
   if (isEditingAboutMe) {
     return (
-      <div className="pt-3">
+      <div className="pt-4">
         <div className="settings-form">
           <h4 className="text-primary  ml-4  mb-4">Account Update</h4>
           <form onSubmit={handleSubmit}>
@@ -174,30 +193,47 @@ const AboutMe = ({
                         key={index}
                         className="badge bg-primary p-2 d-flex align-items-center"
                       >
-                        {lang.language}
+                        {lang.language} - {lang.level} {/* Affiche le niveau */}
                         <button
                           className="btn-close btn-close-white ms-2"
-                          onClick={() => handleRemoveLanguage(lang)}
+                          onClick={(e) => {
+                            e.preventDefault(); // Empêche le comportement par défaut
+                            handleRemoveLanguage(lang); // Supprime la langue
+                          }}
                         />
                       </span>
                     ))}
                   </div>
                 </div>
-                <input
-                  type="text"
-                  placeholder="Nouvelle langue"
-                  className="form-control"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      const languageName = e.target.value.trim(); // On prend la valeur de l'input
-                      if (languageName !== "") {
-                        handleAddLanguage(languageName, "A+"); // Ajouter la langue seulement si non vide
-                        e.target.value = "";
+                <div className="d-flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Nouvelle langue"
+                    className="form-control"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        const languageName = e.target.value.trim(); // On prend la valeur de l'input
+                        if (languageName !== "") {
+                          handleAddLanguage(languageName, selectedLevel); // Ajouter la langue avec le niveau sélectionné
+                          e.target.value = ""; // Réinitialise le champ de saisie
+                        }
                       }
-                    }
-                  }}
-                />
+                    }}
+                  />
+                  <select
+                    className="form-control"
+                    value={selectedLevel}
+                    onChange={(e) => setSelectedLevel(e.target.value)}
+                  >
+                    <option value="A1">A1</option>
+                    <option value="A2">A2</option>
+                    <option value="B1">B1</option>
+                    <option value="B2">B2</option>
+                    <option value="C1">C1</option>
+                    <option value="C2">C2</option>
+                  </select>
+                </div>
               </div>
 
               <div className="form-group col-md-6">
@@ -260,44 +296,45 @@ const AboutMe = ({
 
   return (
     <>
-      <div className="profile-about-me">
-        <div className="pt-4 border-bottom-1 pb-4">
-          <h4 className="text-primary">About Me</h4>
-          <p>{stagiaire.description}</p>
+     <div className="pt-3">
+      <div className="profile-about-me card border-0 shadow-sm p-4 mb-4 bg-light">
+        <h4 className="text-primary fw-bold mb-3">About Me</h4>
+        <p className="text-muted">{stagiaire.description}</p>
+      </div>
+  
+      <div className="profile-skills card border-0 shadow-sm p-4 mb-4 bg-light">
+        <h4 className="text-primary fw-bold mb-3">Competences</h4>
+        <div className="d-flex flex-wrap gap-3">
+          {(stagiaire.competences || []).map((competence, index) => (
+            <button
+              key={index}
+              className="btn btn-outline-dark rounded-3 p-2 my-2 transition-all hover-shadow"
+            >
+              {competence.competenceName}
+            </button>
+          ))}
         </div>
       </div>
-      <div className="profile-skills pt-2 border-bottom-1 pb-2">
-        <h4 className="text-primary mb-4">COMPETENCES</h4>
-        {(stagiaire.competences || []).map((competence, index) => (
-          <a
-            href="javascript:void()"
-            key={index}
-            className="btn btn-outline-dark btn-rounded pl-4 my-3 my-sm-0 pr-4 mr-3 m-b-10"
-          >
-            {competence.competenceName}
-          </a>
-        ))}
+  
+      <div className="profile-lang card border-0 shadow-sm p-4 mb-4 bg-light">
+        <h4 className="text-primary fw-bold mb-3">Languages</h4>
+        <div className="d-flex flex-wrap gap-3">
+          {(stagiaire.languages || []).map((language, index) => (
+            <div key={index} className="d-flex align-items-center mb-2">
+              <span className="me-3 text-muted f-s-16">{language.language}</span>
+              <span className={`badge ${getLevelClass(language.level)} p-2 rounded-3`}>
+                {language.level}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
-      <div className="profile-lang pt-5 border-bottom-1 pb-5">
-        <h4 className="text-primary mb-4">Language</h4>
-        {(stagiaire.languages || []).map((language, index) => (
-          <a
-            key={index}
-            href="javascript:void(0)"
-            className="text-muted pr-3 f-s-16"
-          >
-            {language.language} - {language.level}
-          </a>
-        ))}
-      </div>
-
-      <div className="profile-personal-info">
-        <h4 className="text-primary mb-4">Personal Information</h4>
+  
+      <div className="profile-personal-info card border-0 shadow-sm p-4 mb-4 bg-light">
+        <h4 className="text-primary fw-bold mb-3">Personal Information</h4>
         <div className="row mb-4">
           <div className="col-3">
-            <h5 className="f-w-500">
-              Name <span className="pull-right">:</span>
-            </h5>
+            <h5 className="f-w-500">Name:</h5>
           </div>
           <div className="col-9">
             <span>{stagiaire.fullName}</span>
@@ -305,9 +342,7 @@ const AboutMe = ({
         </div>
         <div className="row mb-4">
           <div className="col-3">
-            <h5 className="f-w-500">
-              Email <span className="pull-right">:</span>
-            </h5>
+            <h5 className="f-w-500">Email:</h5>
           </div>
           <div className="col-9">
             <span>{stagiaire.Email}</span>
@@ -315,9 +350,7 @@ const AboutMe = ({
         </div>
         <div className="row mb-4">
           <div className="col-3">
-            <h5 className="f-w-500">
-              University <span className="pull-right">:</span>
-            </h5>
+            <h5 className="f-w-500">University:</h5>
           </div>
           <div className="col-9">
             <span>{stagiaire.university}</span>
@@ -325,9 +358,7 @@ const AboutMe = ({
         </div>
         <div className="row mb-4">
           <div className="col-3">
-            <h5 className="f-w-500">
-              Education Level <span className="pull-right">:</span>
-            </h5>
+            <h5 className="f-w-500">Education Level:</h5>
           </div>
           <div className="col-9">
             <span>{stagiaire.educationLevel}</span>
@@ -335,19 +366,15 @@ const AboutMe = ({
         </div>
         <div className="row mb-4">
           <div className="col-3">
-            <h5 className="f-w-500">
-              Age <span className="pull-right">:</span>
-            </h5>
+            <h5 className="f-w-500">Age:</h5>
           </div>
           <div className="col-9">
-            <span>{age} Ans</span>
+            <span>{age} Years</span>
           </div>
         </div>
         <div className="row mb-4">
           <div className="col-3">
-            <h5 className="f-w-500">
-              Location <span className="pull-right">:</span>
-            </h5>
+            <h5 className="f-w-500">Location:</h5>
           </div>
           <div className="col-9">
             <span>{stagiaire.address}</span>
@@ -355,24 +382,25 @@ const AboutMe = ({
         </div>
         <div className="row mb-4">
           <div className="col-3">
-            <h5 className="f-w-500">
-              Phone <span className="pull-right">:</span>
-            </h5>
+            <h5 className="f-w-500">Phone:</h5>
           </div>
           <div className="col-9">
             <span>{stagiaire.phone}</span>
           </div>
         </div>
       </div>
+  
       <button
-        className="btn btn-secondary float-end"
+        className="btn btn-secondary btn-sm float-end px-4 py-2 mt-3 rounded-3 transition-all hover-shadow"
         type="button"
         onClick={() => handleEditClick("AboutMe")}
       >
-        modifier
+        <i className="fa fa-edit"></i> Modify
       </button>
+      </div>
     </>
   );
+  
 };
 
 export default AboutMe;

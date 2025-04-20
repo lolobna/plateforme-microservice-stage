@@ -11,6 +11,7 @@ import HomeStagiaire from "./pages/HomeStagiaire"; // Page Home pour un stagiair
 import ProfileStagiaire from "./pages/ProfileStagiaire"; // Page Profile pour un stagiaire
 import PostEnregistres from "./pages/PostEnregistres";
 import StagiaireCandidature from "./pages/StagiareCandidatures";
+import Stagiaire_stageRealises from "./pages/Stagiaire_stageRealises";
 
 const App = () => {
   return (
@@ -39,6 +40,7 @@ const App = () => {
               />
                {/* Route pour la page PostEnregistres d'un stagiaire */}
                <Route path="/:idstagiaire/saved-posts" element={<PostEnregistres />} />
+               <Route path="/:idstagiaire/stages" element={<Stagiaire_stageRealises />} />
                 {/* Route pour la page PostEnregistres d'un stagiaire */}
                 <Route path="/:idstagiaire/candidature" element={<StagiaireCandidature />} />
             </Routes>

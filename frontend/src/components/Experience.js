@@ -10,22 +10,36 @@ const Experience = ({
   editExperience, // Expérience en cours de modification
   handleSaveExperience, // Fonction pour sauvegarder l'expérience modifiée
   handleCancel, // Fonction pour annuler la modification
+  setEditExperience, // Fonction pour définir une nouvelle expérience
+  setIsEditingExperience, // Fonction pour activer le mode édition
+  handleAddExperience, // Fonction pour ajouter une nouvelle expérience
+  handleDeleteExperience, // Fonction pour supprimer une expérience
+  successMessage, // Message de succès
+  errorMessage, // Message d'erreur
 }) => {
   if (isEditingExperience && editExperience) {
     return (
-      <div>
-        <h4>Modifier l'expérience</h4>
+      <div className="edit-experience-form card shadow-lg p-4">
+        <h4 className="text-center mb-4">
+          {editExperience.idExperience
+            ? "Modifier l'expérience"
+            : "Ajouter une expérience"}
+        </h4>
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            handleSaveExperience(
-              stagiaire._id, // ID du stagiaire
-              editExperience.idExperience, // ID de l'expérience
-              editExperience // Données mises à jour
-            );
+            if (editExperience.idExperience) {
+              handleSaveExperience(
+                stagiaire._id,
+                editExperience.idExperience,
+                editExperience
+              );
+            } else {
+              handleAddExperience(editExperience);
+            }
           }}
         >
-          <div className="form-group">
+          <div className="form-group mb-3">
             <label>Titre</label>
             <input
               type="text"
@@ -33,28 +47,35 @@ const Experience = ({
               name="title"
               value={editExperience.title}
               onChange={handleChangeExperience}
+              placeholder="Entrez le titre de l'expérience"
+              required
             />
           </div>
-          <div className="form-group">
+          <div className="form-group mb-3">
             <label>Entreprise</label>
             <input
               type="text"
-              name="company"
               className="form-control"
+              name="company"
               value={editExperience.company}
               onChange={handleChangeExperience}
+              placeholder="Entrez le nom de l'entreprise"
+              required
             />
           </div>
-          <div className="form-group">
+          <div className="form-group mb-3">
             <label>Description</label>
             <textarea
               className="form-control"
               name="description"
               value={editExperience.description}
               onChange={handleChangeExperience}
+              placeholder="Entrez une description"
+              rows="3"
+              required
             />
           </div>
-          <div className="form-group">
+          <div className="form-group mb-3">
             <label>Date de début</label>
             <input
               type="date"
@@ -62,9 +83,10 @@ const Experience = ({
               name="startDate"
               value={editExperience.startDate}
               onChange={handleChangeExperience}
+              required
             />
           </div>
-          <div className="form-group">
+          <div className="form-group mb-3">
             <label>Date de fin</label>
             <input
               type="date"
@@ -74,16 +96,18 @@ const Experience = ({
               onChange={handleChangeExperience}
             />
           </div>
-          <button type="submit" className="btn btn-primary">
-            Sauvegarder
-          </button>
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={() => handleCancel("Experience")}
-          >
-            Annuler
-          </button>
+          <div className="d-flex justify-content-between">
+            <button type="submit" className="btn btn-primary">
+              {editExperience.idExperience ? "Sauvegarder" : "Ajouter"}
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => handleCancel("Experience")}
+            >
+              Annuler
+            </button>
+          </div>
         </form>
       </div>
     );
@@ -91,64 +115,84 @@ const Experience = ({
 
   return (
     <>
+      {/* Affichage des messages */}
+      {successMessage && (
+        <div className="alert alert-success" role="alert">
+          {successMessage}
+        </div>
+      )}
+      {errorMessage && (
+        <div className="alert alert-danger" role="alert">
+          {errorMessage}
+        </div>
+      )}
+
       <div className="col-lg-11">
+     
+
         {stagiaire?.experiences?.map((experience, index) => (
-          <div
-            key={index}
-            className="experience-item"
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <div
-              className="resume-item pb-0"
-              style={{
-                borderLeft: "3px solid #007BFF",
-                paddingLeft: "15px",
-                position: "relative",
-                marginBottom: "30px",
-              }}
-            >
-              <div
-                style={{
-                  position: "absolute",
-                  top: "0",
-                  left: "-9px",
-                  width: "15px",
-                  height: "15px",
-                  backgroundColor: "#007BFF",
-                  borderRadius: "50%",
-                }}
-              ></div>
-              <h4>{experience.title || "Titre non spécifié"}</h4>
-              <h5>{experience.company || "Entreprise non spécifiée"}</h5>
-              <p>
-                <em>
-                  {experience.startDate || "Durée non spécifiée"} -{" "}
-                  {experience.endDate || "Durée non spécifiée"}
-                </em>
-              </p>
-              <p>{experience.description || "Description non disponible"}</p>
+          <div key={index} className="experience-card position-relative">
+            {/* Menu déroulant discret */}
+            <div className="dropdown menu-action position-absolute top-0 end-0 m-2">
+
+              <button
+                className="btn btn-light btn-sm rounded-circle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i className="fas fa-ellipsis-v"></i>
+              </button>
+              <ul className="dropdown-menu dropdown-menu-end">
+                <li>
+                  <button
+                    className="dropdown-item"
+                    onClick={() => handleEditExperienceClick(experience)}
+                  >
+                    ✏️ Modifier
+                  </button>
+                </li>
+                <li>
+                  <button
+                    className="dropdown-item text-danger"
+                    onClick={() =>
+                      handleDeleteExperience(experience.idExperience)
+                    }
+                  >
+                    🗑️ Supprimer
+                  </button>
+                </li>
+              </ul>
             </div>
-            <button
-              className="btn btn-light"
-              style={{
-                marginRight: "8px",
-                border: "none",
-                backgroundColor: "transparent",
-                padding: "0",
-              }}
-              onClick={() => handleEditExperienceClick(experience)} // Fonction pour modifier l'expérience
-            >
-              <FontAwesomeIcon
-                icon={faPen}
-                style={{ color: "#007BFF", fontSize: "16px" }}
-              />
-            </button>
+
+            {/* Contenu expérience */}
+            <div className="experience-timeline-dot"></div>
+            <div className="experience-content">
+              <h5 className="mb-1 fw-bold">{experience.title}</h5>
+              <h6 className="text-muted mb-1">{experience.company}</h6>
+              <p className="text-muted small mb-2">
+                {experience.startDate} - {experience.endDate || "Aujourd'hui"}
+              </p>
+              <p className="mb-0">{experience.description}</p>
+            </div>
           </div>
         ))}
+
+<button
+          className="btn btn-success mb-4"
+          onClick={() => {
+            setEditExperience({
+              title: "",
+              company: "",
+              description: "",
+              startDate: "",
+              endDate: "",
+            });
+            setIsEditingExperience(true);
+          }}
+        >
+          Ajouter une expérience
+        </button>
       </div>
     </>
   );
