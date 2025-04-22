@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
+// Components
 import AboutMe from "../components/AboutMe";
 import Experience from "../components/Experience";
 import Projet from "../components/Projet";
@@ -8,15 +9,21 @@ import ProfileSettings from "../components/Profile_settings";
 import { useStagiaire } from "../context/StagiaireContext";
 
 const StagiairesList = () => {
+  // Context and State Management
   const { idstagiaire } = useStagiaire();
-  const [stagiaire, setStagiaire] = useState(); // Stocke les stagiaires
-  const [loading, setLoading] = useState(true); // Indique si les données chargent
+  
+  // Main Data States
+  const [stagiaire, setStagiaire] = useState();
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Editing States
   const [isEditingAboutMe, setIsEditingAboutMe] = useState(false);
   const [isEditingExperience, setIsEditingExperience] = useState(false);
   const [isEditingProjet, setIsEditingProjet] = useState(false);
   const [isCvModalOpen, setIsCvModalOpen] = useState(false);
+
+  // Form States
   const [editForm, setEditForm] = useState({
     description: "",
     fullName: "",
@@ -29,22 +36,67 @@ const StagiairesList = () => {
     competences: [],
     languages: [],
   });
+  
   const [tempLanguages, setTempLanguages] = useState([]);
   const [tempCompetences, setTempCompetences] = useState([]);
   const [editExperience, setEditExperience] = useState(null);
   const [editProjet, setEditProjet] = useState(null);
+  
   const [profileForm, setProfileForm] = useState({
     email: "",
     fullName: "",
     cv: null,
     profilePhoto: null,
   });
+
+  // Message States
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  // Helper Functions
+  const calculateAge = (birthDate) => {
+    const birth = new Date(birthDate);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDifference = today.getMonth() - birth.getMonth();
+
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
+  // Modal Handlers
   const openCvModal = () => setIsCvModalOpen(true);
   const closeCvModal = () => setIsCvModalOpen(false);
 
+  // Data Fetching
+  useEffect(() => {
+    const fetchStagiaires = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/stagiaires/${idstagiaire}`
+        );
+        setStagiaire(response.data);
+        setLoading(false);
+
+        setProfileForm({
+          email: response.data.Email || "",
+          fullName: response.data.fullName || "",
+          cv: null,
+          profilePhoto: null,
+        });
+      } catch (err) {
+        console.error("Erreur lors de la récupération :", err);
+        setError("Impossible de charger les stagiaires.");
+        setLoading(false);
+      }
+    };
+
+    fetchStagiaires();
+  }, [idstagiaire]);
+
+  // Form Initialization
   useEffect(() => {
     if (stagiaire) {
       const languages = [...(stagiaire.languages || [])];
@@ -68,60 +120,33 @@ const StagiairesList = () => {
     }
   }, [stagiaire]);
 
+  // Message Timeout
   useEffect(() => {
     if (successMessage || errorMessage) {
       const timer = setTimeout(() => {
         setSuccessMessage("");
         setErrorMessage("");
-      }, 3000); // Réinitialise après 3 secondes
+      }, 3000);
 
-      return () => clearTimeout(timer); // Nettoie le timer
+      return () => clearTimeout(timer);
     }
   }, [successMessage, errorMessage]);
 
+  // Language and Competence Handlers
   const handleAddLanguage = (languageName, level) => {
-    // Vérifier si le nom de la langue et le niveau ne sont pas vides
-
     if (languageName.trim() !== "" && level.trim() !== "") {
-      const newLanguage = { language: languageName, level }; // Fix: use `language` instead of `languageName`
-
-      // Vérifier si la langue avec ce niveau existe déjà
+      const newLanguage = { language: languageName, level };
       const languageExists = tempLanguages.some(
-        (lang) =>
-          lang.language === newLanguage.languageName &&
-          lang.level === newLanguage.level // Fix: compare using `language`
+        (lang) => lang.language === newLanguage.languageName && lang.level === newLanguage.level
       );
 
-      // Si la langue et le niveau ne sont pas déjà présents, on l'ajoute
       if (!languageExists) {
         setTempLanguages((prevLanguages) => [...prevLanguages, newLanguage]);
-      } else {
-        console.log("La langue avec ce niveau existe déjà.");
       }
-    } else {
-      console.log("Le nom de la langue ou le niveau est vide.");
     }
-  };
-
-  const calculateAge = (birthDate) => {
-    const birth = new Date(birthDate);
-    const today = new Date();
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDifference = today.getMonth() - birth.getMonth();
-
-    // Si la date d'anniversaire n'est pas encore passée cette année
-    if (
-      monthDifference < 0 ||
-      (monthDifference === 0 && today.getDate() < birth.getDate())
-    ) {
-      age--;
-    }
-    return age;
   };
 
   const handleAddCompetence = (competenceName) => {
-    console.log("Ajout de compétence:", competenceName);
-    // Vérifier que comp n'est pas vide, null, ou seulement des espaces
     if (competenceName.trim() !== "") {
       const level = "A+";
       const newComp = { competenceName, level };
@@ -137,36 +162,32 @@ const StagiairesList = () => {
     setTempCompetences((prev) => prev.filter((c) => c !== comp));
   };
 
-  const handleEditClick = () => {
-    setIsEditingAboutMe(true);
-  };
+  // Edit Mode Handlers
+  const handleEditClick = () => setIsEditingAboutMe(true);
+
   const handleEditExperienceClick = (experience) => {
-    setIsEditingExperience(true); // Active le mode édition
-    setEditExperience(experience); // Stocke l'expérience à modifier
+    setIsEditingExperience(true);
+    setEditExperience(experience);
   };
 
   const handleEditProjetClick = (projet) => {
-    setIsEditingProjet(true); // Active le mode édition
-    setEditProjet(projet); // Stocke l'expérience à modifier
+    setIsEditingProjet(true);
+    setEditProjet(projet);
   };
 
   const handleAddProjetClick = () => {
     setEditProjet({ title: "", description: "", projetImg: null });
-    setIsEditingProjet(true); // Active le mode édition
+    setIsEditingProjet(true);
   };
 
-  const handleSaveExperience = async (
-    stagiaireId,
-    experienceId,
-    updatedExperience
-  ) => {
+  // Save Handlers
+  const handleSaveExperience = async (stagiaireId, experienceId, updatedExperience) => {
     try {
       const response = await axios.put(
         `http://localhost:8081/api/stagiaires/${stagiaireId}/experiences/${experienceId}`,
         updatedExperience
       );
 
-      // Mettre à jour l'état local avec les nouvelles données
       setStagiaire((prev) => ({
         ...prev,
         experiences: prev.experiences.map((exp) =>
@@ -175,7 +196,7 @@ const StagiairesList = () => {
       }));
 
       setSuccessMessage("Expérience modifiée avec succès !");
-      setIsEditingExperience(false); // Désactive le mode édition
+      setIsEditingExperience(false);
     } catch (error) {
       setErrorMessage("Erreur lors de la modification de l'expérience.");
       console.error("Erreur lors de la modification de l'expérience :", error);
@@ -189,31 +210,83 @@ const StagiairesList = () => {
         newExperience
       );
 
-      // Mettre à jour l'état local avec la nouvelle expérience
       setStagiaire((prev) => ({
         ...prev,
         experiences: [...prev.experiences, response.data],
       }));
 
       setSuccessMessage("Expérience ajoutée avec succès !");
-      setIsEditingExperience(false); // Désactive le mode édition
-      setEditExperience(null); // Réinitialise le formulaire
+      setIsEditingExperience(false);
+      setEditExperience(null);
     } catch (error) {
       setErrorMessage("Erreur lors de l'ajout de l'expérience.");
       console.error("Erreur lors de l'ajout de l'expérience :", error);
     }
   };
 
+  const handleSaveProjet = async (stagiaireId, projetId, updatedProjet) => {
+    try {
+      const formData = new FormData();
+      formData.append("title", updatedProjet.title);
+      formData.append("description", updatedProjet.description);
+      if (updatedProjet.imageFile) {
+        formData.append("projetImg", updatedProjet.imageFile);
+      }
+
+      const response = await axios.put(
+        `http://localhost:8081/api/stagiaires/${stagiaireId}/projets/${projetId}`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      setStagiaire((prev) => ({
+        ...prev,
+        projets: prev.projets.map((projet) =>
+          projet.idProjet === projetId ? response.data : projet
+        ),
+      }));
+      setIsEditingProjet(false);
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du projet :", error);
+    }
+  };
+
+  const handleAddProjet = async (newProjet) => {
+    try {
+      const formData = new FormData();
+      formData.append("title", newProjet.title);
+      formData.append("description", newProjet.description);
+      if (newProjet.imageFile) {
+        formData.append("projetImg", newProjet.imageFile);
+      }
+
+      const response = await axios.post(
+        `http://localhost:8080/api/stagiaires/${stagiaire._id}/projets`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      setStagiaire((prev) => ({
+        ...prev,
+        projets: [...prev.projets, response.data],
+      }));
+
+      setSuccessMessage("Projet ajouté avec succès !");
+      setIsEditingProjet(false);
+      setEditProjet(null);
+    } catch (error) {
+      console.error("Erreur lors de l'ajout du projet :", error);
+    }
+  };
+
+  // Delete Handlers
   const handleDeleteExperience = async (experienceId) => {
-    if (
-      window.confirm("Êtes-vous sûr de vouloir supprimer cette expérience ?")
-    ) {
+    if (window.confirm("Êtes-vous sûr de vouloir supprimer cette expérience ?")) {
       try {
         await axios.delete(
           `http://localhost:8081/api/stagiaires/${stagiaire._id}/experiences/${experienceId}`
         );
 
-        // Mettre à jour l'état local après suppression
         setStagiaire((prev) => ({
           ...prev,
           experiences: prev.experiences.filter(
@@ -229,75 +302,12 @@ const StagiairesList = () => {
     }
   };
 
-  const handleSaveProjet = async (stagiaireId, projetId, updatedProjet) => {
-    try {
-      const formData = new FormData();
-      formData.append("title", updatedProjet.title);
-      formData.append("description", updatedProjet.description);
-      if (updatedProjet.imageFile) {
-        formData.append("projetImg", updatedProjet.imageFile); // Ajoutez l'image au FormData
-      }
-
-      const response = await axios.put(
-        `http://localhost:8081/api/stagiaires/${stagiaireId}/projets/${projetId}`,
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
-
-      // Mettez à jour l'état local avec les nouvelles données
-      setStagiaire((prev) => ({
-        ...prev,
-        projets: prev.projets.map((projet) =>
-          projet.idProjet === projetId ? response.data : projet
-        ),
-      }));
-      setIsEditingProjet(false); // Désactive le mode édition
-    } catch (error) {
-      console.error("Erreur lors de la mise à jour du projet :", error);
-    }
-  };
-
-  const handleAddProjet = async (newProjet) => {
-    try {
-      const formData = new FormData();
-      formData.append("title", newProjet.title);
-      formData.append("description", newProjet.description);
-      if (newProjet.imageFile) {
-        formData.append("projetImg", newProjet.imageFile);
-      }
-
-      console.log("Données envoyées :", newProjet); // Log des données envoyées
-
-      const response = await axios.post(
-        `http://localhost:8081/api/stagiaires/${stagiaire._id}/projets`,
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
-
-      console.log("Réponse de l'API :", response.data); // Log de la réponse
-
-      // Mettre à jour l'état local avec le nouveau projet
-      setStagiaire((prev) => ({
-        ...prev,
-        projets: [...prev.projets, response.data],
-      }));
-
-      // Afficher un message de succès
-      setSuccessMessage("Projet ajouté avec succès !");
-      setIsEditingProjet(false); // Désactive le mode édition
-      setEditProjet(null); // Réinitialise le formulaire
-    } catch (error) {
-      console.error("Erreur lors de l'ajout du projet :", error);
-    }
-  };
-
   const handleDeleteProjet = async (projetId) => {
     try {
       await axios.delete(
         `http://localhost:8081/api/stagiaires/${stagiaire._id}/projets/${projetId}`
       );
 
-      // Mettre à jour l'état local en supprimant le projet
       setStagiaire((prev) => ({
         ...prev,
         projets: prev.projets.filter((projet) => projet.idProjet !== projetId),
@@ -307,9 +317,9 @@ const StagiairesList = () => {
     }
   };
 
+  // Cancel Handlers
   const handleCancel = (sectionName) => {
     if (sectionName === "AboutMe") {
-      // Réinitialiser les listes temporaires aux valeurs d'origine
       setTempLanguages(stagiaire.languages || []);
       setTempCompetences(stagiaire.competences || []);
       setIsEditingAboutMe(false);
@@ -320,6 +330,7 @@ const StagiairesList = () => {
     }
   };
 
+  // Change Handlers
   const handleChange = (e) => {
     const { name, value } = e.target;
     setEditForm((prev) => ({ ...prev, [name]: value }));
@@ -329,7 +340,7 @@ const StagiairesList = () => {
     const { name, value } = e.target;
     setEditExperience((prev) => ({
       ...prev,
-      [name]: value, // Met à jour uniquement le champ modifié
+      [name]: value,
     }));
   };
 
@@ -337,7 +348,7 @@ const StagiairesList = () => {
     const { name, value } = e.target;
     setEditProjet((prev) => ({
       ...prev,
-      [name]: value, // Met à jour uniquement le champ modifié
+      [name]: value,
     }));
   };
 
@@ -350,6 +361,7 @@ const StagiairesList = () => {
     }
   };
 
+  // Submit Handlers
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
 
@@ -375,7 +387,6 @@ const StagiairesList = () => {
         { headers: { "Content-Type": "multipart/form-data" } }
       );
 
-      // Mettre à jour l'état local avec les nouvelles données
       setStagiaire((prev) => ({
         ...prev,
         Email: response.data.Email,
@@ -384,7 +395,6 @@ const StagiairesList = () => {
         cv: response.data.cv,
       }));
 
-      // Afficher un message de succès
       setSuccessMessage("Mise à jour réussie !");
     } catch (error) {
       console.error("Erreur lors de la mise à jour du profil :", error);
@@ -392,7 +402,6 @@ const StagiairesList = () => {
     }
   };
 
-  //update
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -416,44 +425,16 @@ const StagiairesList = () => {
       setError("An error occurred while updating the information.");
     }
   };
-  
 
-  //recuperer
-  useEffect(() => {
-    // Fonction pour récupérer les stagiaires via l'API
-    const fetchStagiaires = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8081/api/stagiaires/${idstagiaire}`
-        ); // URL de l'API
-        setStagiaire(response.data);
-        setLoading(false); // Arrête le chargement
-
-        // Initialiser le formulaire avec les données du stagiaire
-        setProfileForm({
-          email: response.data.Email || "",
-          fullName: response.data.fullName || "",
-          cv: null, // Les fichiers ne peuvent pas être pré-remplis
-          profilePhoto: null, // Les fichiers ne peuvent pas être pré-remplis
-        });
-      } catch (err) {
-        console.error("Erreur lors de la récupération :", err);
-        setError("Impossible de charger les stagiaires.");
-        setLoading(false);
-      }
-    };
-
-    fetchStagiaires(); // Appelle la fonction au chargement
-  }, [idstagiaire]);
-
+  // Loading and Error States
   if (loading) return <p>Chargement en cours...</p>;
   if (error) return <p>{error}</p>;
 
+  // Main Render
   return (
     <>
       <div className="content-body">
         <div className="container-fluid">
-          {/* row */}
           <div className="row">
             <div className="col-lg-12">
               <div className="profile">
@@ -464,8 +445,8 @@ const StagiairesList = () => {
                       <img
                         src={
                           stagiaire && stagiaire.profilePhoto
-                            ? `http://localhost:8081/${stagiaire.profilePhoto}` // URL de la photo de profil
-                            : "images/profile/profile.png" // Image par défaut
+                            ? `http://localhost:8081/${stagiaire.profilePhoto}`
+                            : "images/profile/profile.png"
                         }
                         className="img-fluid rounded-circle"
                         alt="Profile"
@@ -494,26 +475,26 @@ const StagiairesList = () => {
                             <div className="profile-cv">
                               {stagiaire && stagiaire.cv ? (
                                 <>
-                               <button
-  className="btn btn-modern"
-  onClick={openCvModal}
-  style={{
-    position: 'absolute',
-    right: '20px', // vous pouvez ajuster cette valeur selon vos besoins
-    top: '20px', // ajustez la position verticale si nécessaire
-    padding: '10px 20px', // ajoute un peu de padding pour un bouton plus grand
-    backgroundColor: '#4CAF50', // couleur moderne
-    color: 'white', // texte blanc
-    border: 'none',
-    borderRadius: '5px', // arrondir les coins
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', // effet d'ombre
-    transition: 'background-color 0.3s ease', // effet de transition pour le survol
-  }}
-  onMouseOver={(e) => (e.target.style.backgroundColor = '#45a049')} // couleur au survol
-  onMouseOut={(e) => (e.target.style.backgroundColor = '#4CAF50')} // couleur par défaut
->
-  Voir le CV
-</button>
+                                  <button
+                                    className="btn btn-modern"
+                                    onClick={openCvModal}
+                                    style={{
+                                      position: 'absolute',
+                                      right: '20px',
+                                      top: '20px',
+                                      padding: '10px 20px',
+                                      backgroundColor: '#4CAF50',
+                                      color: 'white',
+                                      border: 'none',
+                                      borderRadius: '5px',
+                                      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                                      transition: 'background-color 0.3s ease',
+                                    }}
+                                    onMouseOver={(e) => (e.target.style.backgroundColor = '#45a049')}
+                                    onMouseOut={(e) => (e.target.style.backgroundColor = '#4CAF50')}
+                                  >
+                                    Voir le CV
+                                  </button>
 
                                   {isCvModalOpen && (
                                     <div className="modal-overlay">
@@ -603,18 +584,13 @@ const StagiairesList = () => {
                             setIsEditingExperience={setIsEditingExperience}
                             handleAddExperience={handleAddExperience}
                             handleDeleteExperience={handleDeleteExperience}
-                            handleEditExperienceClick={
-                              handleEditExperienceClick
-                            } // Passez la fonction ici
+                            handleEditExperienceClick={handleEditExperienceClick}
                             successMessage={successMessage}
                             errorMessage={errorMessage}
                           />
                         </div>
 
-                        <div
-                          id="about-me"
-                          className="tab-pane fade active show"
-                        >
+                        <div id="about-me" className="tab-pane fade active show">
                           <AboutMe
                             stagiaire={stagiaire}
                             isEditingAboutMe={isEditingAboutMe}
@@ -645,7 +621,7 @@ const StagiairesList = () => {
                             handleAddProjet={handleAddProjet}
                             handleDeleteProjet={handleDeleteProjet}
                             setIsEditingProjet={setIsEditingProjet}
-                            successMessage={successMessage} // Passez successMessage ici
+                            successMessage={successMessage}
                           />
                         </div>
                         <div id="profileSettings" className="tab-pane fade">

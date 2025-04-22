@@ -26609,162 +26609,198 @@ body {
   padding: 0;
 }
 
-/* Conteneur principal de la page */
+/* ----------------------------------------------------------------- */
+/*------------------------------------------------------------------- */
+/* ------------------------- Offre de stage --------------------------- */
+/* ------------------------------------------------------------------- */
+/* ------------------------------------------------------------------- */
+
 .content-body {
   padding: 40px 20px;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  background-color: #f9fbfd;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
-  gap: 20px;
-
-  width: 100%;
-}
-.card-grid a {
+.content-body  a {
   text-decoration: none;
 }
-/* Style des cartes */
-.job-card {
-  background-color: #ffffff; /* Fond blanc */
-  border: 1px solid #ddd; /* Bordure grise */
-  border-radius: 8px;
-  overflow: hidden;
+/* Grille des offres */
+.card-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 1000px;
+}
 
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+/* Carte d'offre */
+.job-card {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  padding: 24px;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+  color: inherit;
 }
 
 .job-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
+/* Partie gauche de la carte */
 .job-left {
   display: flex;
-  align-items: center;
-  padding: 10px;
-  background-color: #3498db; /* Couleur bleue */
-  color: #fff;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 180px;
 }
 
 .job-left img {
   border-radius: 50%;
-  margin-right: 20px;
-  width: 60px; /* Taille de l'image */
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
 }
 
 .job-left h6 {
   font-size: 16px;
-  font-weight: bold;
+  font-weight: 600;
+  margin: 0;
 }
 
 .category-tag {
-  background-color: #2ecc71; /* Couleur verte */
-  padding: 5px 10px;
-  border-radius: 4px;
-  margin-left: auto;
-  font-size: 14px;
-  margin-right: 10px;
+  background-color: #2ecc71;
   color: #fff;
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 20px;
+  font-weight: 500;
 }
 
 .location,
 .type {
   font-size: 14px;
-  color: #fff;
-
-  margin-right: 5px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
+/* Partie droite de la carte */
 .job-right {
-  padding: 20px;
+  flex: 1;
 }
 
 .job-right h2 {
-  font-size: 18px;
-  color: #3498db; /* Couleur bleue */
-  margin-bottom: 15px;
+  font-size: 20px;
+  color: #2c3e50;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .job-right p {
-  font-size: 16px;
-  color: #333; /* Couleur du texte */
-  margin-bottom: 20px;
+  font-size: 15px;
+  color: #444;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+/* Tags infos */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
 .tags span {
-  display: inline-block;
-  background-color: #e7f7ff; /* Fond bleu clair */
-  color: #3498db; /* Texte bleu */
-  padding: 5px 10px;
-  border-radius: 4px;
-  margin: 5px 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background-color: #f0f4f8;
+  color: #333;
   font-size: 14px;
+  border-radius: 20px;
 }
 
+/* Compétences requises */
 .Requiredskills {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .Requiredskills strong {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 6px;
   display: block;
-  margin-bottom: 10px;
-  font-weight: bold;
 }
 
 .Requiredskills ul {
-  padding-left: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-left: 0;
+  margin: 0;
 }
 
 .Requiredskills li {
-  font-size: 14px;
-  color: #555; /* Gris clair */
-  background-color: #e7f7ff; /* Fond bleu clair */
-  padding: 5px 10px;
-  border-radius: 4px;
-  margin: 5px 0;
-  list-style-type: none; /* Supprime les puces de la liste */
-  width: fit-content;
+  background-color: #eaf6ff;
+  color: #007bff;
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  list-style: none;
 }
 
+/* Footer de la carte */
 .card-footer {
-  padding: 15px 20px;
+  margin-top: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #f0f4f8; /* Fond gris clair */
+  border-top: 1px solid #eee;
+  padding-top: 15px;
 }
 
 .apply-btn {
-  background-color: #3498db; /* Bleu */
-  color: #fff;
   padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  font-weight: 500;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s;
 }
 
 .apply-btn:hover {
-  background-color: #2980b9; /* Bleu foncé */
+  background-color: #0056b3;
 }
 
 .save-icon {
   font-size: 20px;
-  color: #999; /* Gris pour l'icône */
+  color: #888;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: color 0.2s;
 }
 
 .save-icon:hover {
-  color: #3498db; /* Change la couleur au survol (bleu) */
+  color: #333;
 }
+
 
 /* Ajout de la responsive design pour les petits écrans */
 @media (max-width: 768px) {
@@ -26841,9 +26877,11 @@ th {
 .bold-text {
   font-weight: bold;
 }
-
-/* ==================== candidtutres */
-
+/* ------------------------------------------------------------------- */
+/* ------------------------------------------------------------------- */
+/* ===================suivre la candidtutres ====================  */
+/* ------------------------------------------------------------------- */
+/* ------------------------------------------------------------------- */
 .container2 {
   background: #fff;
   padding: 30px;
@@ -26978,7 +27016,11 @@ th {
   background-color: #d3f7f8;
   color: #17a2b8;
 }
-
+/* ------------------------------------------------------------------- */
+/* ------------------------------------------------------------------- */
+/* ---------------------affichage de cv--------------------------------- */
+/* ------------------------------------------------------------------- */
+/* ------------------------------------------------------------------- */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -27017,11 +27059,16 @@ th {
   height: 100%;
   border: none;
 }
-
-
 .portfolio-section {
   padding: 2rem;
 }
+
+/* ------------------------------------------------------------------- */
+/* ------------------------------------------------------------------- */
+/* --------------------------project-------------------------------- */
+/* ------------------------------------------------------------------- */
+
+
 
 .add-project-btn {
   margin-bottom: 1.5rem;
@@ -27144,6 +27191,12 @@ th {
   border-color: #545b62;
 }
 
+/* ------------------------------------------------------------------- */
+/* ------------------------------------------------------------------- */
+/* --------------------------experince-------------------------------- */
+/* ------------------------------------------------------------------- */
+
+
 
 /* Conteneur principal de chaque carte */
 .experience-card {
@@ -27180,6 +27233,12 @@ th {
   box-shadow: 0 4px 14px rgba(13, 110, 253, 0.15);
 }
 
+/* ------------------------------------------------------------------- */
+/* ------------------------------------------------------------------- */
+/* --------------------------langauge-------------------------------- */
+/* ------------------------------------------------------------------- */
+
+
 
 .language-badge {
   margin-bottom: 8px;
@@ -27213,5 +27272,11 @@ th {
   font-size: 12px;
   padding: 0;
 }
+
+
+/* ------------------------------------------------------------------- */
+/* ------------------------------------------------------------------- */
+/* --------------------------project-------------------------------- */
+/* ------------------------------------------------------------------- */
 
 

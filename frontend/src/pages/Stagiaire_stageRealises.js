@@ -20,64 +20,98 @@ const Stagiaire_stageRealises = () => {
     }
   }, [idstagiaire, setIdStagiaire]);
 
-
+  // Exemple de données pour les stages réalisés
+  const completedStages = [
+    {
+      id: 1,
+      title: "Stage - Développeur Web Front-End",
+      location: "Casablanca",
+      domain: "Développement",
+      type: "Présentiel",
+      duration: "3 mois",
+      acceptedDate: "15 janvier 2024",
+    },
+    {
+      id: 2,
+      title: "Stage - Marketing Digital",
+      location: "Rabat",
+      domain: "Marketing",
+      type: "Télétravail",
+      duration: "2 mois",
+      acceptedDate: "10 mars 2023",
+    },
+  ];
 
   return (
-<div className="content-body">
+    <div className="content-body">
+      <div className="card-grid">
+        {completedStages.map((stage) => (
+          <div key={stage.id} className="job-card">
+            <a href="/entreprise" className="job-card-link">
+              <div className="job-left">
+                <img src="https://i.pravatar.cc/80?img=20" alt="Auteur" />
+                <h6>Nom de l'entreprise</h6>
+                <span className="category-tag">{stage.domain}</span>
+                <div className="location">
+                  <i className="fa-solid fa-location-dot" /> {stage.location}
+                </div>
+                <div className="type">
+                  <i className="fa-solid fa-laptop-house" /> {stage.type}
+                </div>
+                <div className="tags">
+             
+                <span>
+                  <i className="fa-regular fa-calendar green-icon" /> Accepté le :{" "}
+                  {stage.acceptedDate}
+                </span>
+              </div>
+              </div>
+            </a>
+            <div className="job-right">
+              <h2>
+                <i className="fa-solid fa-briefcase"></i> {stage.title}
+              </h2>
+              <p>
+                Ce stage a été réalisé avec succès dans le domaine de{" "}
+                {stage.domain}. Il a permis de développer des compétences clés
+                et de contribuer à des projets significatifs.
+              </p>
 
-<div className="content-body p-4">
-  <h3 className="mb-4 fw-bold text-center">Stages Réalisés</h3>
-  <div className="row">
-    {/* Exemple de carte */}
-    <div className="col-md-6 col-lg-4 mb-4">
-      <div className="card shadow-sm h-100 border-0">
-        <div className="card-body">
-          <h5 className="card-title text-primary">Société ABC</h5>
-          <p className="card-text mb-1">
-            <strong>Localisation:</strong> Casablanca
-          </p>
-          <p className="card-text mb-1">
-            <strong>Durée:</strong> 3 mois
-          </p>
-          <p className="card-text mb-1">
-            <strong>Type:</strong> Présentiel
-          </p>
-          <p className="card-text text-muted small mb-0">
-            Réalisé en 2024
-          </p>
-        </div>
+              <div className="tags">
+                <span>
+                  <i className="fa-solid fa-circle-check green-icon" /> Rémunéré
+                  : {}
+                </span>
+                <span>
+                  <i className="fa-solid fa-user-check" /> Pré-embauche :{" "}
+                  {stage.preHire}
+                </span>
+                <span>
+                  <i className="fa-regular fa-calendar gray-icon" /> Durée :{" "}
+                  {stage.duration}
+                </span>
+                <span>
+                  <i className="fa-regular fa-calendar gray-icon" /> Début : 4
+                  mai
+                </span>
+              </div>
+
+              <div className="Requiredskills">
+                <strong>Compétences développées :</strong>
+                <ul>
+                  <li>React</li>
+                  <li>Marketing Digital</li>
+                  <li>Analyse de données</li>
+                </ul>
+              </div>
+              
+            </div>
+            
+          </div>
+          
+        ))}
       </div>
     </div>
-
-    {/* Copie cette carte autant de fois que nécessaire */}
-    <div className="col-md-6 col-lg-4 mb-4">
-      <div className="card shadow-sm h-100 border-0">
-        <div className="card-body">
-          <h5 className="card-title text-primary">InnoTech</h5>
-          <p className="card-text mb-1">
-            <strong>Localisation:</strong> Rabat
-          </p>
-          <p className="card-text mb-1">
-            <strong>Durée:</strong> 2 mois
-          </p>
-          <p className="card-text mb-1">
-            <strong>Type:</strong> Télétravail
-          </p>
-          <p className="card-text text-muted small mb-0">
-            Réalisé en 2023
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
-
-</div>
-
-  
   );
 };
 
