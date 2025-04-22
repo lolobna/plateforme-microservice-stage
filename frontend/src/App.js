@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { StagiaireProvider } from "./context/StagiaireContext"; // Import du contexte
 import Header from "./components/Header";
@@ -14,12 +14,39 @@ import StagiaireCandidature from "./pages/StagiareCandidatures";
 import Stagiaire_stageRealises from "./pages/Stagiaire_stageRealises";
 
 const App = () => {
+  const [jobs, setJobs] = useState([]); // Liste complète des offres
+  const [filteredJobs, setFilteredJobs] = useState([]); // Liste filtrée
+
+  // Fonction pour gérer la recherche
+  const handleSearch = (searchTerm) => {
+    const filtered = jobs.filter((job) =>
+      job.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredJobs(filtered);
+  };
+
+  // Fonction pour gérer le filtrage
+  const handleFilterChange = (filters) => {
+    const filtered = jobs.filter((job) => {
+      return (
+        (filters.location === "" || job.location === filters.location) &&
+        (filters.domain === "" || job.domain === filters.domain) &&
+        (filters.preHire === "" || job.preHire === filters.preHire) &&
+        (filters.paid === "" || job.paid === filters.paid) &&
+        (filters.type === "" || job.type === filters.type) &&
+        (filters.duration === "" || job.duration === filters.duration)
+      );
+    });
+    setFilteredJobs(filtered);
+  };
+
   return (
     <StagiaireProvider>
       <Router>
         <div id="main-wrapper">
           <Navheader />
-          <Header />
+          {/* Passez les fonctions au Header */}
+          <Header onSearch={handleSearch} onFilterChange={handleFilterChange} />
           <Sidebar />
 
           <div>
@@ -31,21 +58,39 @@ const App = () => {
               <Route path="/about" element={<AboutUs />} />
 
               {/* Route pour la page Home d'un stagiaire */}
-              <Route path="/:idstagiaire/home" element={<HomeStagiaire />} />
+              <Route
+                path="/:idstagiaire/home"
+                element={
+                  <HomeStagiaire
+                    jobs={jobs}
+                    filteredJobs={filteredJobs}
+                    setJobs={setJobs}
+                    setFilteredJobs={setFilteredJobs}
+                  />
+                }
+              />
 
               {/* Route pour la page Profile d'un stagiaire */}
               <Route
                 path="/:idstagiaire/profile"
                 element={<ProfileStagiaire />}
               />
-               {/* Route pour la page PostEnregistres d'un stagiaire */}
-               <Route path="/:idstagiaire/saved-posts" element={<PostEnregistres />} />
-               <Route path="/:idstagiaire/stages" element={<Stagiaire_stageRealises />} />
-                {/* Route pour la page PostEnregistres d'un stagiaire */}
-                <Route path="/:idstagiaire/candidature" element={<StagiaireCandidature />} />
-            </Routes>
 
-             
+              {/* Route pour la page PostEnregistres d'un stagiaire */}
+              <Route
+                path="/:idstagiaire/saved-posts"
+                element={<PostEnregistres />}
+              />
+              <Route
+                path="/:idstagiaire/stages"
+                element={<Stagiaire_stageRealises />}
+              />
+              {/* Route pour la page PostEnregistres d'un stagiaire */}
+              <Route
+                path="/:idstagiaire/candidature"
+                element={<StagiaireCandidature />}
+              />
+            </Routes>
           </div>
 
           <Footer />

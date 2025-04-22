@@ -1,4 +1,4 @@
-package com.example.service_stagiaire.configuration;
+package com.example.api_gateway.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
