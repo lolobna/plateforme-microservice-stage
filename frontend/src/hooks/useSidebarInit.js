@@ -16,8 +16,9 @@ const useSidebarInit = () => {
 
     const initializeSidebar = async () => {
       try {
-        await loadScript(process.env.PUBLIC_URL + '/js/quixnav-init.js');
-        await loadScript(process.env.PUBLIC_URL + '/js/custom.min.js');
+        // Comme les fichiers sont publics dans Vite, ils sont servis à la racine "/"
+        await loadScript('/js/js/quixnav-init.js');
+        await loadScript('/js/js/custom.min.js');
         
         // Réinitialise le menu après le rendu
         if (window.MetisMenu) {
