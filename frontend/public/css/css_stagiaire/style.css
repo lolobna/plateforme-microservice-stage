@@ -26762,7 +26762,7 @@ body {
   list-style: none;
 }
 
-/* Footer de la carte */
+
 .card-footer {
   margin-top: 20px;
   display: flex;
@@ -26797,6 +26797,12 @@ body {
 .save-icon:hover {
   color: #333;
 }
+.apply-btn.applied {
+  background-color: #003366; /* bleu sombre */
+  color: white;
+  cursor: default;
+}
+
 
 
 /* Ajout de la responsive design pour les petits écrans */
@@ -26873,12 +26879,10 @@ th {
 
 .bold-text {
   font-weight: bold;
-}
+}/* ------------------------------------------------------------------- */
+/* ===================suivre la candidature ==================== */
 /* ------------------------------------------------------------------- */
-/* ------------------------------------------------------------------- */
-/* ===================suivre la candidtutres ====================  */
-/* ------------------------------------------------------------------- */
-/* ------------------------------------------------------------------- */
+
 .container2 {
   background: #fff;
   padding: 30px;
@@ -26886,10 +26890,6 @@ th {
   width: 100%;
   margin: auto;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-
-.stage-btn {
-  text-decoration: none;
 }
 
 .skills {
@@ -26913,6 +26913,7 @@ th {
   background-color: #d2e3fc;
   cursor: default;
 }
+
 .stage-info {
   display: flex;
   flex-direction: column;
@@ -26924,14 +26925,17 @@ th {
   background-color: #4f46e5;
   color: white;
   text-decoration: none;
-  padding: 5px 10px;
+  padding: 8px 16px;
   border-radius: 8px;
-  font-size: 13px;
-  transition: background-color 0.3s ease;
+  font-size: 14px;
+  display: inline-block;
+  margin-top: 10px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .stage-btn:hover {
   background-color: #3730a3;
+  transform: translateY(-2px);
 }
 
 .stage-badge {
@@ -26942,7 +26946,9 @@ th {
   border-radius: 12px;
   font-weight: 500;
 }
-
+.stage-badge:hover{
+  cursor: pointer;
+}
 .container2 h2 {
   margin-bottom: 20px;
   font-size: 20px;
@@ -26952,16 +26958,33 @@ th {
 .container2 .table-header,
 .container2 .row {
   display: grid;
-  grid-template-columns: 2fr 2fr 2fr 1fr 1fr;
+  grid-template-columns: 2fr 2fr 2fr 1fr 1fr 1fr;
   align-items: center;
   padding: 12px 0;
   border-bottom: 1px solid #eee;
+
 }
+.company-link {
+  text-decoration: none;  /* Enlève le soulignement */
+  color: inherit; /* Hérite de la couleur du parent (ici le texte reste tel quel) */
+}
+
+.company-link img {
+  display: inline-block; /* Empêche l'image d'influencer la mise en forme des autres éléments */
+}
+
+.company-link div {
+  display: inline-block; /* Garde le texte à côté de l'image sans changement de style */
+}
+
+
 
 .container2 .table-header {
   font-weight: bold;
   color: #555;
   border-bottom: 2px solid #e0e0e0;
+  
+ 
 }
 
 .container2 .row:last-child {
@@ -27013,6 +27036,93 @@ th {
   background-color: #d3f7f8;
   color: #17a2b8;
 }
+
+.container2 .tag.orange {
+  background-color: orange;
+  color: white;
+}
+
+.container2 .tag.yellow {
+  background-color: yellow;
+  color: black;
+}
+
+.container2 .tag.green {
+  background-color: green;
+  color: white;
+}
+
+.container2 .tag.red {
+  background-color: red;
+  color: white;
+}
+
+.container2 .modal1 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.container2 .modal-content1 {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  width: 60%;
+  max-width: 800px;
+}
+
+.container2 .close1 {
+  position: absolute;
+  top: 100px;
+
+  right: 100px;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.container2 .close1:hover{
+  background-color: orangered;
+}
+
+/* Style for the "Annuler" button */
+.stage-btn-annuler {
+  background-color: #f44336;  /* Red color for Cancel */
+  padding: 4px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+ 
+  border-radius: 8px;
+
+  display: inline-block;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.stage-btn-annuler:hover {
+  background-color: #d32f2f;
+  transform: translateY(-2px);
+}
+
+.stage-btn, .stage-btn-annuler {
+  text-decoration: none;
+  color: white;
+  font-weight: 500;
+}
+
+/* Align the "Annuler" button with other buttons */
+.row .stage-btn-annuler {
+  margin-top: 10px;
+}
+
+
 /* ------------------------------------------------------------------- */
 /* ------------------------------------------------------------------- */
 /* ---------------------affichage de cv--------------------------------- */

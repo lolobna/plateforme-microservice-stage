@@ -40,10 +40,10 @@ const App = () => {
       return (
         (filters.location === "" || job.location === filters.location) &&
         (filters.domain === "" || job.domain === filters.domain) &&
-        (filters.preHire === "" || job.preHire === filters.preHire) &&
-        (filters.paid === "" || job.paid === filters.paid) &&
-        (filters.type === "" || job.type === filters.type) &&
-        (filters.duration === "" || job.duration === filters.duration)
+        (filters.preEmbauche === "" ||  String(job.preEmbauche) === filters.preEmbauche) &&
+        (filters.paid === "" ||  String(job.paid) === filters.pais) &&
+        (filters.type === "" || job.typeDeStage === filters.type) &&
+        (filters.duration === "" || String(job.duration) === filters.duration)
       );
     });
     setFilteredJobs(filtered);

@@ -5,7 +5,7 @@ function Header({ onSearch, onFilterChange }) {
   const [filters, setFilters] = useState({
     location: "",
     domain: "",
-    preHire: "",
+    preEmbauche: "",
     paid: "",
     type: "",
     duration: "",
@@ -104,17 +104,17 @@ function Header({ onSearch, onFilterChange }) {
                       <label className="form-label">Pré-embauche</label>
                       <select
                         className="form-control"
-                        name="preHire"
-                        value={filters.preHire}
+                        name="preEmbauche"
+                        value={filters.preEmbauche}
                         onChange={handleFilterChange}
                       >
                         <option value="">Toutes</option>
-                        <option value="Oui">Oui</option>
-                        <option value="Non">Non</option>
+                        <option value="true">Oui</option>
+                        <option value="false">Non</option>
                       </select>
                     </div>
                     <div className="mb-2">
-                      <label className="form-label">Rémunéré</label>
+                      <label className="form-label">rémuneré</label>
                       <select
                         className="form-control"
                         name="paid"
@@ -122,10 +122,11 @@ function Header({ onSearch, onFilterChange }) {
                         onChange={handleFilterChange}
                       >
                         <option value="">Toutes</option>
-                        <option value="Oui">Oui</option>
-                        <option value="Non">Non</option>
+                        <option value="true">Oui</option>
+                        <option value="false">Non</option>
                       </select>
                     </div>
+                   
                     <div className="mb-2">
                       <label className="form-label">Type</label>
                       <select
@@ -148,12 +149,12 @@ function Header({ onSearch, onFilterChange }) {
                         onChange={handleFilterChange}
                       >
                         <option value="">Toutes</option>
-                        <option value="1 mois">1 mois</option>
-                        <option value="2 mois">2 mois</option>
-                        <option value="3 mois">3 mois</option>
-                        <option value="4 mois">4 mois</option>
-                        <option value="5 mois">5 mois</option>
-                        <option value="6 mois">6 mois</option>
+                        <option value="1">1 mois</option>
+                        <option value="2">2 mois</option>
+                        <option value="3">3 mois</option>
+                        <option value="4">4 mois</option>
+                        <option value="5">5 mois</option>
+                        <option value="6">6 mois</option>
                       </select>
                     </div>
                     <button

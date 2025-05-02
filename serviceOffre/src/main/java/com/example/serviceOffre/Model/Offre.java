@@ -15,6 +15,7 @@ public class Offre {
     private Long idOffre;
     @Column(name = "identreprise")
     private Long idEntreprise;
+
     private String title;
     private String description;
     private String domaineDeStage;
@@ -27,8 +28,9 @@ public class Offre {
     private String statut; // en cours, terminé...//il se peut que je la supprime
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "offre")
-    @JsonIgnoreProperties("offre")
+    @JsonManagedReference
     private List<RequiredSkill> requiredSkills;
+
 
     public Long getIdOffre() {
         return idOffre;
@@ -102,13 +104,14 @@ public class Offre {
         this.preEmbauche = preEmbauche;
     }
 
-    public float isRémunéré() {
+    public float getRemuneration() {
         return remuneration;
     }
 
-    public void setRémunéré(float remuneration) {
+    public void setRemuneration(float remuneration) {
         this.remuneration = remuneration;
     }
+
 
     public String getTypeDeStage() {
         return typeDeStage;

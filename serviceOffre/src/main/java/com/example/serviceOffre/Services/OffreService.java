@@ -15,7 +15,15 @@ import java.util.LinkedHashMap;
 public class OffreService {
     @Autowired
     private OffreRepository offreRepository;
+
     private  RequiredSkillService requiredSkillService;
+
+
+    public OffreService(RequiredSkillService requiredSkillService) {
+        this.requiredSkillService = requiredSkillService;
+    }
+
+
 
     //public Offre saveOffre(Offre offre) {
     //    return offreRepository.save(offre);
@@ -86,5 +94,10 @@ public class OffreService {
                         arr -> (Long) arr[1]
                 ));
     }
+
+    public void deleteAllOffres() {
+        offreRepository.deleteAll();
+    }
+
 }
 

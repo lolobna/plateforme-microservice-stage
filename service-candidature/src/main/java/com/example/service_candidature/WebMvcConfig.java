@@ -1,4 +1,4 @@
-package com.example.serviceOffre;
+package com.example.service_candidature;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

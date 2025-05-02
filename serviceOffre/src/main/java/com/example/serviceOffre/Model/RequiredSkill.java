@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "required_Skills")
+@Table(name = "required_skills") // ou simplement pas de nom : JPA utilisera `requiredskill`
 public class RequiredSkill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,6 +17,7 @@ public class RequiredSkill {
     @JoinColumn(name = "idoffre")
     @JsonBackReference
     private Offre offre;
+
     public Long getIdSkill() {
         return idSkill;
     }

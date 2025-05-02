@@ -12,17 +12,28 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:5173", maxAge = 3600)
 @RestController
 @RequestMapping("/offres")
 public class OffreController {
 
     @Autowired
     private OffreService offreService;
+    private OffreRepository offreRepository;
     @Autowired
     private RequiredSkillService requiredSkillService;
 
-    @PostMapping("/offres")
+    public OffreController(OffreRepository offreRepository) {
+        this.offreRepository = offreRepository;
+    }
+
+    @GetMapping
+    public List<Offre> getAllOffres() {
+        // Exemple : récupérer les offres depuis la base de données
+        return offreRepository.findAll();
+    }
+
+    @PostMapping
     public ResponseEntity<Offre> createOffre(@RequestBody Offre offre) {
 
         if (offre.getRequiredSkills() != null) {
@@ -79,4 +90,11 @@ public class OffreController {
     public Map<String, Long> getLocationStats(@PathVariable Long idEntreprise) {
         return offreService.countByLocation(idEntreprise);
     }
+
+    @DeleteMapping("/all")
+    public ResponseEntity<Void> deleteAllOffres() {
+        offreService.deleteAllOffres();
+        return ResponseEntity.noContent().build();
+    }
+
 }
