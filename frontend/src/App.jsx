@@ -5,8 +5,7 @@ import Header from "./components/components_stagiaire/Header";
 import Footer from "./components/components_stagiaire/Footer";
 import Navheader from "./components/components_stagiaire/NavHeader";
 import Sidebar from "./components/components_stagiaire/Sidebar";
-import Accueil from "./pages/pages_stagiaire/Accueil";
-import AboutUs from "./pages/pages_stagiaire/AboutUs";
+
 import HomeStagiaire from "./pages/pages_stagiaire/HomeStagiaire";
 import ProfileStagiaire from "./pages/pages_stagiaire/ProfileStagiaire";
 import PostEnregistres from "./pages/pages_stagiaire/PostEnregistres";
